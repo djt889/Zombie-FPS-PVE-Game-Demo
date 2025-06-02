@@ -349,7 +349,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 69
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -465,9 +465,6 @@ MonoBehaviour:
   IsSprinting: 0
   JumpTriggered: 0
   IsCrouching: 0
-  IsAiming: 0
-  FireTriggered: 0
-  ReloadTriggered: 0
 --- !u!114 &1334809281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,7 +771,6 @@ MonoBehaviour:
   walkSpeed: 5
   runSpeed: 8
   crouchSpeed: 2.5
-  aimSpeed: 3
   jumpForce: 7
   gravity: -17.13
   crouchHeight: 1
