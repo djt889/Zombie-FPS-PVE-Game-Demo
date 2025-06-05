@@ -12,14 +12,12 @@ public class FllowMouse : MonoBehaviour
     public float smoothSpeed = 5f;
     
     [Header("视差设置")]
-    [Tooltip("启用视差效果")] 
-    public bool enableParallax = true;
+    private bool enableParallax = true;
     [Tooltip("视差强度 (0=无移动, 1=完全跟随)")] 
     [Range(0f, 1f)] public float parallaxFactor = 0.5f;
     
     [Header("边界限制")]
-    [Tooltip("启用边界限制")] 
-    public bool enableBoundaries = true;
+    private bool enableBoundaries = true;
     [Tooltip("最大水平偏移")] 
     public float maxHorizontalOffset = 50f;
     [Tooltip("最大垂直偏移")] 
@@ -52,8 +50,8 @@ public class FllowMouse : MonoBehaviour
 
         // 转换为偏移向量（中心为原点，范围-1到1）
         Vector2 mouseOffset = new Vector2(
-            (mousePosNormalized.x - 0.5f) * 2f,
-            (mousePosNormalized.y - 0.5f) * 2f
+            -(mousePosNormalized.x - 0.5f) * 2f,
+            -(mousePosNormalized.y - 0.5f) * 2f
         );
 
         // 应用视差效果（前景移动更多，背景移动更少）
