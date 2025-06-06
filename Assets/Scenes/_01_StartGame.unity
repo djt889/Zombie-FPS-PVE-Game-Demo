@@ -3401,7 +3401,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterMixer: {fileID: 0}
-  soundLibrary: []
+  soundLibrary:
+  - id: MouseHoverSound
+    clip: {fileID: 8300000, guid: 2a640e6c8bff8184da25d73bc625a053, type: 3}
+    type: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+    spatialBlend: 0
+    minDistance: 0
+    maxDistance: 0
   masterVolume: 1
   musicVolume: 1
   sfxVolume: 1
