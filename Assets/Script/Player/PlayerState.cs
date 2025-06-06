@@ -13,5 +13,5 @@ public enum PlayerState
     Falling,     // 下落
     Aiming,      // 瞄准
     Reloading,   // 装弹
-    Fireting     // 射击
+    Fireing     // 射击
 }
