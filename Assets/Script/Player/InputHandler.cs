@@ -18,7 +18,7 @@ public class InputHandler : MonoBehaviour
     public bool JumpTriggered;   // 跳跃触发
     public bool IsCrouching;     // 下蹲状态
     public bool IsAiming;        // 瞄准状态
-    public bool FireTriggered;  // 射击触发
+    public bool FireTriggered;   // 射击触发
     public bool ReloadTriggered; // 装弹触发
 
     // 移动输入事件

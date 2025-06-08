@@ -11,7 +11,6 @@ public enum PlayerState
     Crouching,   // 下蹲
     Jumping,     // 跳跃
     Falling,     // 下落
-    Aiming,      // 瞄准
     Reloading,   // 装弹
-    Fireing     // 射击
+    Fireing      // 射击
 }
