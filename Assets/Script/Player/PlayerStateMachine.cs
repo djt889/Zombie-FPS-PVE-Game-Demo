@@ -12,6 +12,7 @@ public class PlayerStateMachine : MonoBehaviour
     private Animator playerAnimator; //主角动画状态机组件
     private CharacterController controller;        // 角色控制器组件
     private InputHandler input;                // 输入处理组件
+    private WeaponManager weaponManager; // 武器管理器组件
 
     [Header("移动设置")]
     [SerializeField] private float walkSpeed = 5f;   // 基础移动速度
@@ -28,30 +29,21 @@ public class PlayerStateMachine : MonoBehaviour
     [SerializeField] private float standHeight = 2f;      // 站立时原始高度
     [SerializeField] private float crouchTransitionSpeed = 5f; // 高度过渡速度
 
-    [Header("射击设置")]
-    [SerializeField] private float fireRate = 0.1f; // 射击间隔
-    [SerializeField] private GameObject bulletPrefab; // 子弹预制体
-    [SerializeField] private Transform firePoint; // 射击点
-    [SerializeField] private float bulletSpeed = 30f; // 子弹速度
-    [SerializeField] private int maxAmmo = 30; // 最大弹药量
-    [SerializeField] private int currentAmmo; // 当前弹药量
-
     [Header("动画设置")]
     private readonly int moveXHash = Animator.StringToHash("Move_X"); //X轴移动参数
     private readonly int moveYHash = Animator.StringToHash("Move_Y"); //Y轴移动参数
     private readonly int isRuningHash = Animator.StringToHash("IsRuning"); // 奔跑动画参数
-    private readonly int isFireingHash = Animator.StringToHash("IsFireing"); // 射击动画参数
-    private readonly int reloadHash = Animator.StringToHash("Reload"); // 装弹动画参数
+    private readonly int isCrouchingHash = Animator.StringToHash("IsCrouching"); // 下蹲动画参数
+    private readonly int isJumpHash = Animator.StringToHash("IsJump"); // 跳跃触发
+    private readonly int isGroundedHash = Animator.StringToHash("IsGrounded"); // 落地触发
 
     [Header("状态管理")]
     public PlayerState CurrentState; // 当前状态（公开可读）
-    private PlayerState previousState; // 记录之前的状态
+    private PlayerState previousState; // 记录之前的状态   -------------------------------
     private Vector3 verticalVelocity;    // 垂直速度（跳跃/下落）
+    private bool wasGrounded; // 用于检测落地
     private float originalCameraY;       // 摄像机原始Y轴位置
     private bool isGrounded;             // 是否接触地面
-    private bool isFireing; // 射击状态标志
-    private float nextFireTime; // 下次可射击时间
-    private float fireTimer; // 射击计时器
 
     private void Awake()
     {
@@ -59,8 +51,9 @@ public class PlayerStateMachine : MonoBehaviour
         controller = GetComponent<CharacterController>(); // 获取角色控制器
         playerAnimator = GetComponent<Animator>();
         input = GetComponent<InputHandler>();         // 获取输入组件
+        weaponManager = GetComponent<WeaponManager>(); // 获取武器管理器
+        wasGrounded = true;     // 上一帧是否在地面上
         originalCameraY = cameraRoot.localPosition.y;    // 记录初始摄像机高度
-        currentAmmo = maxAmmo;
     }
 
     private void Update()
@@ -70,28 +63,15 @@ public class PlayerStateMachine : MonoBehaviour
         HandleHorizontalMovement();            // 处理水平移动
         HandleVerticalMovement();              // 处理垂直运动
         HandleCrouch();                        // 处理下蹲状态
-        HandleFireing();                       // 处理射击逻辑
-        AnimationParameters();                 // 处理动画参数
+        HandleWeaponInput();                   // 处理武器输入
+        MoveAnimationParameters();             // 处理移动动画参数
+        JumpAnimationParameters();             // 处理跳跃动画参数
         input.ConsumeActions();                // 重置瞬时输入
     }
 
     /// 处理状态转换逻辑
     private void HandleStateTransition()
     {
-        // 装弹优先
-        if (input.ReloadTriggered && currentAmmo < maxAmmo && CanReload())
-        {
-            SetState(PlayerState.Reloading);
-            return;
-        }
-
-        // 射击状态
-        if (input.FireTriggered && CanFire())
-        {
-            SetState(PlayerState.Fireing);
-            return;
-        }
-
         // 空中状态处理
         if (!isGrounded)
         {
@@ -133,8 +113,6 @@ public class PlayerStateMachine : MonoBehaviour
             _ => walkSpeed // 默认使用行走速度
         };
 
-        playerAnimator.SetBool(isRuningHash, CurrentState == PlayerState.Running);
-
         // 计算移动方向
         Vector3 moveDirection = transform.TransformDirection(new Vector3(input.MoveInput.x, 0, input.MoveInput.y));
 
@@ -150,32 +128,22 @@ public class PlayerStateMachine : MonoBehaviour
         if (input.JumpTriggered && CanJump())
         {
             verticalVelocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
-            // 跳跃时不改变当前移动状态（如奔跑跳跃）
-            if (CurrentState != PlayerState.Fireing && CurrentState != PlayerState.Reloading)
-            {
-                SetState(PlayerState.Jumping);
-            }
+            SetState(PlayerState.Jumping);
         }
 
         // 重力应用
         if (isGrounded && verticalVelocity.y < 0)
         {
             verticalVelocity.y = -2f;
-            // 着陆时仅当不是射击/装弹状态才回到空闲
-            if ((CurrentState == PlayerState.Jumping || CurrentState == PlayerState.Falling) &&
-                CurrentState != PlayerState.Fireing && CurrentState != PlayerState.Reloading)
-            {
+            if ((CurrentState == PlayerState.Jumping || CurrentState == PlayerState.Falling))
+            { 
                 SetState(PlayerState.Idle);
             }
         }
         else
         {
             verticalVelocity.y += gravity * Time.deltaTime;
-            // 下落时不改变当前状态（如射击时下落）
-            if (!isGrounded && verticalVelocity.y < 0 &&
-                CurrentState != PlayerState.Falling &&
-                CurrentState != PlayerState.Fireing &&
-                CurrentState != PlayerState.Reloading)
+            if (!isGrounded && verticalVelocity.y < 0 && CurrentState != PlayerState.Falling)
             {
                 SetState(PlayerState.Falling);
             }
@@ -207,53 +175,46 @@ public class PlayerStateMachine : MonoBehaviour
             crouchTransitionSpeed * Time.deltaTime
         );
         cameraRoot.localPosition = camPos;
+
+        playerAnimator.SetBool(isCrouchingHash, CurrentState == PlayerState.Crouching);
     }
 
-    // 处理射击逻辑
-    private void HandleFireing()
+    // 武器
+    private void HandleWeaponInput()
     {
-        isFireing = CurrentState == PlayerState.Fireing;
-        playerAnimator.SetBool(isFireingHash, isFireing);
-
-        // 射击状态处理
-        if (isFireing)
+        // 鼠标滚轮切换武器类型
+        if (input.SwitchWeaponType != 0)
         {
-            // 射击冷却计时
-            if (Time.time >= nextFireTime && currentAmmo > 0)
-            {
-                FireWeapon();
-                nextFireTime = Time.time + fireRate;
-            }
+            // 计算新武器类型索引
+            int newType = (int)weaponManager.currentWeaponType + input.SwitchWeaponType;
 
-            // 射击状态持续时间
-            fireTimer += Time.deltaTime;
-            if (fireTimer >= fireRate * 2)
-            {
-                fireTimer = 0;
-                SetState(previousState);
-            }
+            // 循环处理索引 (0-Primary, 1-Secondary, 2-Melee)
+            if (newType < 0) newType = 2;
+            if (newType > 2) newType = 0;
+
+            // 装备新类型武器
+            weaponManager.EquipWeapon((WeaponType)newType);
         }
-    }
 
-    // 实际射击逻辑
-    private void FireWeapon()
-    {
-        // 减少弹药
-        currentAmmo--;
-
-        // 创建子弹
-        if (bulletPrefab && firePoint)
+        // 数字键切换武器类型
+        switch (input.SwitchWeaponIndex)
         {
-            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            if (rb) rb.velocity = firePoint.forward * bulletSpeed;
-
-            // 可选：添加枪口闪光、声音等效果
+            case 1:
+                weaponManager.EquipWeapon(WeaponType.Primary);
+                break;
+            case 2:
+                weaponManager.EquipWeapon(WeaponType.Secondary);
+                break;
+            case 3:
+                weaponManager.EquipWeapon(WeaponType.Melee);
+                break;
         }
-    }
 
+        // 传递输入到武器管理器
+        weaponManager.UpdateWeapon(input.FireTriggered, input.ReloadTriggered);
+    }
     //动画
-    private void AnimationParameters()
+    private void MoveAnimationParameters()
     {
         Vector3 horizontalVelocity = input.MoveInput;
         horizontalVelocity.z = 0;
@@ -278,6 +239,25 @@ public class PlayerStateMachine : MonoBehaviour
         playerAnimator.SetBool(isRuningHash, CurrentState == PlayerState.Running);
     }
 
+    private void JumpAnimationParameters()
+    {
+        playerAnimator.SetBool(isGroundedHash, isGrounded);
+        // 如果刚落地，立即关闭跳跃动画
+        if (wasGrounded == false && controller.isGrounded)
+        {
+            //playerAnimator.Play("Move");
+            playerAnimator.SetBool(isJumpHash, false);
+        }
+        // 否则根据空中状态设置跳跃动画
+        else if (CurrentState == PlayerState.Jumping || CurrentState == PlayerState.Falling)
+        {
+            playerAnimator.SetBool(isJumpHash, true);
+        }
+
+        // 记录上一帧地面状态
+        wasGrounded = isGrounded;
+    }
+
     private bool CanJump()
     {
         // 允许在移动状态（行走/奔跑）时跳跃
@@ -285,75 +265,29 @@ public class PlayerStateMachine : MonoBehaviour
             CurrentState == PlayerState.Idle ||
             CurrentState == PlayerState.Walking ||
             CurrentState == PlayerState.Running ||
-            CurrentState == PlayerState.Crouching || // 添加：允许下蹲时跳跃
+            CurrentState == PlayerState.Crouching ||
             CurrentState == PlayerState.Falling
         );
-    }
-
-    // 判断是否可以射击
-    private bool CanFire()
-    {
-        // 允许在跳跃/下落时射击
-        return currentAmmo > 0 &&
-               CurrentState != PlayerState.Reloading;
-    }
-
-    // 判断是否可以装弹
-    private bool CanReload()
-    {
-        return isGrounded &&
-               CurrentState != PlayerState.Jumping &&
-               CurrentState != PlayerState.Falling;
     }
 
     // 安全切换状态
     private void SetState(PlayerState newState)
     {
         if (CurrentState == newState) return;
-
-        // 记录之前状态
-        previousState = CurrentState;
-
-        ExitState(CurrentState);
         CurrentState = newState;
-        EnterState(newState);
     }
 
     private void EnterState(PlayerState state)
     {
-        switch (state)
-        {
-            case PlayerState.Reloading:
-                // 触发装弹动画
-                playerAnimator.SetTrigger(reloadHash);
-                // 重置射击计时器
-                fireTimer = 0;
-                break;
+        //switch (state)
+        //{
 
-            case PlayerState.Fireing:
-                // 重置射击计时器
-                fireTimer = 0;
-                break;
-        }
+        //}
     }
 
-    private void ExitState(PlayerState state)
+    // 拾取武器（外部调用）
+    public void PickupWeapon(WeaponBase weapon)
     {
-        switch (state)
-        {
-            case PlayerState.Reloading:
-                // 装弹完成，补充弹药
-                currentAmmo = maxAmmo;
-                break;
-        }
-    }
-
-    // 动画事件回调（由装弹动画调用）
-    public void OnReloadComplete()
-    {
-        if (CurrentState == PlayerState.Reloading)
-        {
-            SetState(previousState);
-        }
+        weaponManager.AddWeapon(weapon);
     }
 }

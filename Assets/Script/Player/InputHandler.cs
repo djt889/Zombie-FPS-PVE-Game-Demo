@@ -12,14 +12,15 @@ public class InputHandler : MonoBehaviour
     public Vector2 MoveInput;    // WASD输入值
     public Vector2 LookInput;    // 鼠标输入
     public bool IsSprinting;     // 奔跑状态
-
-    // 动作输入
-    [Header("Action Inputs")]
     public bool JumpTriggered;   // 跳跃触发
     public bool IsCrouching;     // 下蹲状态
-    public bool IsAiming;        // 瞄准状态
-    public bool FireTriggered;   // 射击触发
-    public bool ReloadTriggered; // 装弹触发
+
+
+    public bool FireTriggered;      // 射击触发
+    public bool ReloadTriggered;    // 装弹触发
+    public bool PickupTriggered;    // 拾取输入
+    public int SwitchWeaponType;    // 鼠标滚轮方向：-1向下，1向上
+    public int SwitchWeaponIndex;   // 数字键切换武器
 
     // 移动输入事件
     public void OnMove(InputAction.CallbackContext context)
@@ -50,13 +51,6 @@ public class InputHandler : MonoBehaviour
         IsCrouching = context.ReadValueAsButton();
     }
 
-    // 瞄准输入
-    public void OnAim(InputAction.CallbackContext context)
-    {
-        // 右键按住期间保持瞄准状态
-        IsAiming = context.ReadValueAsButton();
-    }
-
     // 射击输入
     public void OnFire(InputAction.CallbackContext context)
     {
@@ -71,11 +65,42 @@ public class InputHandler : MonoBehaviour
         if (context.started) ReloadTriggered = true;
     }
 
+    // 拾取输入
+    public void OnPickup(InputAction.CallbackContext context)
+    {
+        if (context.started) PickupTriggered = true;
+    }
+
+    // 鼠标滚轮输入（-1向下，1向上）
+    public void OnSwitchWeaponType(InputAction.CallbackContext context)
+    {
+        float scrollValue = context.ReadValue<Vector2>().y;
+        SwitchWeaponType = scrollValue > 0 ? 1 : (scrollValue < 0 ? -1 : 0);
+    }
+    // 字母数字1输入
+    public void OnSwitchWeapon1(InputAction.CallbackContext context)
+    {
+        if (context.started) SwitchWeaponIndex = 0;
+    }
+    // 字母数字2输入
+    public void OnSwitchWeapon2(InputAction.CallbackContext context)
+    {
+        if (context.started) SwitchWeaponIndex = 1;
+    }
+    // 字母数字3输入
+    public void OnSwitchWeapon3(InputAction.CallbackContext context)
+    {
+        if (context.started) SwitchWeaponIndex = 2;
+    }
+
     // 重置瞬时触发
     public void ConsumeActions()
     {
-        JumpTriggered = false;   // 防止连续跳跃
-        FireTriggered = false;  // 重置射击触发
-        ReloadTriggered = false; // 重置装弹触发
+        JumpTriggered = false;    // 防止连续跳跃
+        FireTriggered = false;    // 重置射击触发
+        ReloadTriggered = false;  // 重置装弹触发
+        PickupTriggered = false;  // 重置拾取触发
+        SwitchWeaponType = 0;
+        SwitchWeaponIndex = -1;
     }
 }

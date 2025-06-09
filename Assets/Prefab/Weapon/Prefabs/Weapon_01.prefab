@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2984087062438588010}
   - component: {fileID: 2072397264756412093}
   - component: {fileID: 8000606548106427307}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_01_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,8 +104,39 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: -1
   m_Mesh: {fileID: 3712014988299530561, guid: fdf00ae655c6f9d4abac02c38bd47b3e, type: 3}
+--- !u!1 &3287438774114289071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3174253951378741065}
+  m_Layer: 7
+  m_Name: FirePoint_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3174253951378741065
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3287438774114289071}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.18, y: 0.062, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5738456080911321149}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &4965438261709640327
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +146,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5738456080911321149}
-  m_Layer: 0
+  - component: {fileID: 2208982985355473110}
+  - component: {fileID: -8248260183597558655}
+  - component: {fileID: 7261212076238218774}
+  m_Layer: 7
   m_Name: Weapon_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,8 +173,72 @@ Transform:
   - {fileID: 4744854618519397250}
   - {fileID: 8371653277672579678}
   - {fileID: 8116155075977294907}
+  - {fileID: 3174253951378741065}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2208982985355473110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4965438261709640327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e613de9d56cf0840a73fc6953d36a21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: "\u519B\u7528\u624B\u67AA"
+  weaponType: 1
+  firePoint: {fileID: 3174253951378741065}
+  maxAmmo: 30
+  currentAmmo: 0
+  reloadTime: 2
+  bulletPrefab: {fileID: 3575611928538805115, guid: 745a87995944ab94caa447ec2061dbc4, type: 3}
+  bulletSpeed: 30
+  damage: 35
+  fireRate: 0.2
+  recoilForce: 0.5
+--- !u!114 &-8248260183597558655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4965438261709640327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61005ad3f14463e45aa66d98cc1ee5fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponPrefab: {fileID: 2208982985355473110}
+  weaponName: "\u6B66\u5668"
+  rotationSpeed: 45
+  floatHeight: 0.2
+  floatSpeed: 1
+--- !u!136 &7261212076238218774
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4965438261709640327}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Height: 0.4
+  m_Direction: 0
+  m_Center: {x: -0.05, y: 0.01, z: 0}
 --- !u!1 &6650470630134122455
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +251,7 @@ GameObject:
   - component: {fileID: 3141442408904332027}
   - component: {fileID: 3022981560694259401}
   - component: {fileID: 6046095663842076106}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_01_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -245,7 +343,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: -1
   m_Mesh: {fileID: -5433442519505195169, guid: fdf00ae655c6f9d4abac02c38bd47b3e, type: 3}
 --- !u!1 &8502960412684221905
 GameObject:
@@ -259,7 +357,7 @@ GameObject:
   - component: {fileID: 4584101929267674204}
   - component: {fileID: 2952207158904981720}
   - component: {fileID: 8765265625684021415}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_01_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -351,7 +449,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: -1
   m_Mesh: {fileID: -2920378444690669910, guid: fdf00ae655c6f9d4abac02c38bd47b3e, type: 3}
 --- !u!1 &9051692995052618235
 GameObject:
@@ -365,7 +463,7 @@ GameObject:
   - component: {fileID: 4750580526164418305}
   - component: {fileID: 9136702200399345792}
   - component: {fileID: 7237317679767152662}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon_01_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -457,5 +555,5 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: -1
   m_Mesh: {fileID: 7953271441601586070, guid: fdf00ae655c6f9d4abac02c38bd47b3e, type: 3}
