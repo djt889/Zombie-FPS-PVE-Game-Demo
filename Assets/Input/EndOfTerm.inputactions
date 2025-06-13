@@ -87,6 +87,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Discard",
+                    "type": "Button",
+                    "id": "6936e9be-c5c8-4cee-9262-486986038b10",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "SwitchWeaponType",
                     "type": "Value",
                     "id": "28f452ae-f507-44c5-8505-7f65c16c196f",
@@ -352,6 +361,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Pickup",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "58394337-f2ed-429e-bf62-1763ec9abc4a",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Discard",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// 武器管理系统（简化版）- 每个挂载点只有一个武器
-/// 挂载对象：玩家角色
-/// </summary>
+// 武器管理系统
 public class WeaponManager : MonoBehaviour
 {
     [Header("武器挂载点")]
@@ -22,19 +19,21 @@ public class WeaponManager : MonoBehaviour
 
     // 武器切换参数
     private float lastSwitchTime;
-    private const float switchCooldown = 0.3f; // 切换冷却时间
+    private const float switchCooldown = 0.1f; // 切换冷却时间
 
     // 添加武器到指定槽位
-    public void AddWeapon(WeaponBase newWeapon)
+    public WeaponBase AddWeapon(WeaponBase newWeapon)
     {
+        // 清理武器名称
+        newWeapon.gameObject.name = newWeapon.GetCleanWeaponName();
+
+        WeaponBase replacedWeapon = null;
+
         switch (newWeapon.GetWeaponType())
         {
             case WeaponType.Primary:
-                // 如果已有主武器，先销毁
-                if (primaryWeapon != null)
-                {
-                    Destroy(primaryWeapon.gameObject);
-                }
+                // 保存被替换的武器
+                replacedWeapon = primaryWeapon;
 
                 // 设置新武器
                 primaryWeapon = newWeapon;
@@ -47,10 +46,7 @@ public class WeaponManager : MonoBehaviour
                 break;
 
             case WeaponType.Secondary:
-                if (secondaryWeapon != null)
-                {
-                    Destroy(secondaryWeapon.gameObject);
-                }
+                replacedWeapon = secondaryWeapon;
 
                 secondaryWeapon = newWeapon;
                 secondaryWeapon.transform.SetParent(secondarySlot, false);
@@ -59,10 +55,7 @@ public class WeaponManager : MonoBehaviour
                 break;
 
             case WeaponType.Melee:
-                if (meleeWeapon != null)
-                {
-                    Destroy(meleeWeapon.gameObject);
-                }
+                replacedWeapon = meleeWeapon;
 
                 meleeWeapon = newWeapon;
                 meleeWeapon.transform.SetParent(meleeSlot, false);
@@ -72,6 +65,8 @@ public class WeaponManager : MonoBehaviour
         }
 
         Debug.Log($"装备武器: {newWeapon.GetWeaponName()}");
+
+        return replacedWeapon;
     }
 
     // 装备指定类型的武器
@@ -115,6 +110,32 @@ public class WeaponManager : MonoBehaviour
                     currentWeaponType = WeaponType.Melee;
                 }
                 break;
+        }
+    }
+
+    // 移除指定类型的武器
+    public void RemoveWeapon(WeaponType type)
+    {
+        switch (type)
+        {
+            case WeaponType.Primary:
+                primaryWeapon = null;
+                break;
+            case WeaponType.Secondary:
+                secondaryWeapon = null;
+                break;
+            case WeaponType.Melee:
+                meleeWeapon = null;
+                break;
+        }
+
+        // 如果移除的是当前武器，装备其他可用武器
+        if (currentWeapon != null && currentWeapon.GetWeaponType() == type)
+        {
+            if (primaryWeapon != null) EquipWeapon(WeaponType.Primary);
+            else if (secondaryWeapon != null) EquipWeapon(WeaponType.Secondary);
+            else if (meleeWeapon != null) EquipWeapon(WeaponType.Melee);
+            else currentWeapon = null;
         }
     }
 

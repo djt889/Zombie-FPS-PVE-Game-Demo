@@ -39,7 +39,6 @@ public class PlayerStateMachine : MonoBehaviour
 
     [Header("状态管理")]
     public PlayerState CurrentState; // 当前状态（公开可读）
-    private PlayerState previousState; // 记录之前的状态   -------------------------------
     private Vector3 verticalVelocity;    // 垂直速度（跳跃/下落）
     private bool wasGrounded; // 用于检测落地
     private float originalCameraY;       // 摄像机原始Y轴位置
@@ -56,7 +55,7 @@ public class PlayerStateMachine : MonoBehaviour
         originalCameraY = cameraRoot.localPosition.y;    // 记录初始摄像机高度
     }
 
-    private void Update()
+    public void ProcessInputs()
     {
         isGrounded = controller.isGrounded;    // 更新地面检测状态
         HandleStateTransition();               // 处理状态转换逻辑
@@ -66,7 +65,6 @@ public class PlayerStateMachine : MonoBehaviour
         HandleWeaponInput();                   // 处理武器输入
         MoveAnimationParameters();             // 处理移动动画参数
         JumpAnimationParameters();             // 处理跳跃动画参数
-        input.ConsumeActions();                // 重置瞬时输入
     }
 
     /// 处理状态转换逻辑
@@ -199,20 +197,34 @@ public class PlayerStateMachine : MonoBehaviour
         // 数字键切换武器类型
         switch (input.SwitchWeaponIndex)
         {
-            case 1:
+            case 0:
                 weaponManager.EquipWeapon(WeaponType.Primary);
                 break;
-            case 2:
+            case 1:
                 weaponManager.EquipWeapon(WeaponType.Secondary);
                 break;
-            case 3:
+            case 2:
                 weaponManager.EquipWeapon(WeaponType.Melee);
                 break;
         }
 
+        //丢弃武器
+        if (input.DiscardTriggered)
+        {
+            WeaponBase currentWeapon = weaponManager.GetCurrentWeapon();
+            if (currentWeapon != null)
+            {
+                // 从武器管理器移除
+                weaponManager.RemoveWeapon(currentWeapon.GetWeaponType());
+
+                // 丢弃到场景中
+                GetComponent<WeaponPickupHandler>().DropWeapon(currentWeapon);
+            }
+        }
         // 传递输入到武器管理器
         weaponManager.UpdateWeapon(input.FireTriggered, input.ReloadTriggered);
     }
+
     //动画
     private void MoveAnimationParameters()
     {
@@ -275,19 +287,5 @@ public class PlayerStateMachine : MonoBehaviour
     {
         if (CurrentState == newState) return;
         CurrentState = newState;
-    }
-
-    private void EnterState(PlayerState state)
-    {
-        //switch (state)
-        //{
-
-        //}
-    }
-
-    // 拾取武器（外部调用）
-    public void PickupWeapon(WeaponBase weapon)
-    {
-        weaponManager.AddWeapon(weapon);
     }
 }

@@ -11,6 +11,9 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected int currentAmmo;       // 当前弹药量
     [SerializeField] protected float reloadTime = 2f; // 装弹时间
 
+    [Header("武器模型")]
+    [SerializeField] private GameObject weaponModel;  // 武器模型
+
     protected bool isReloading;                       // 装弹状态
     protected float nextFireTime;                     // 下次可射击时间
 
@@ -18,6 +21,12 @@ public abstract class WeaponBase : MonoBehaviour
     public virtual void Initialize(Animator animator)
     {
         currentAmmo = maxAmmo;
+    }
+
+    // 获取干净的武器名称（不含Clone）
+    public string GetCleanWeaponName()
+    {
+        return gameObject.name.Replace("(Clone)", "");
     }
 
     // 武器主逻辑更新
@@ -39,6 +48,16 @@ public abstract class WeaponBase : MonoBehaviour
             Fire();
             nextFireTime = Time.time + GetFireRate();
         }
+    }
+
+    public GameObject GetWeaponModel()
+    {
+        if (weaponModel == null)
+        {
+            // 如果没有指定模型，使用自身
+            return gameObject;
+        }
+        return weaponModel;
     }
 
     // 武器射击逻辑（由子类实现）

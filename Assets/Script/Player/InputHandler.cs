@@ -7,18 +7,18 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class InputHandler : MonoBehaviour
 {
-    // 移动输入
-    [Header("Movement Inputs")]
+    [Header("移动输入")]
     public Vector2 MoveInput;    // WASD输入值
     public Vector2 LookInput;    // 鼠标输入
     public bool IsSprinting;     // 奔跑状态
     public bool JumpTriggered;   // 跳跃触发
     public bool IsCrouching;     // 下蹲状态
 
-
+    [Header("武器输入")]
     public bool FireTriggered;      // 射击触发
     public bool ReloadTriggered;    // 装弹触发
     public bool PickupTriggered;    // 拾取输入
+    public bool DiscardTriggered;   // 丢弃输入
     public int SwitchWeaponType;    // 鼠标滚轮方向：-1向下，1向上
     public int SwitchWeaponIndex;   // 数字键切换武器
 
@@ -71,6 +71,13 @@ public class InputHandler : MonoBehaviour
         if (context.started) PickupTriggered = true;
     }
 
+    // 丢弃输入
+    public void OnDiscard(InputAction.CallbackContext context)
+    {
+        if (context.started) DiscardTriggered = true;
+    }
+
+
     // 鼠标滚轮输入（-1向下，1向上）
     public void OnSwitchWeaponType(InputAction.CallbackContext context)
     {
@@ -81,16 +88,19 @@ public class InputHandler : MonoBehaviour
     public void OnSwitchWeapon1(InputAction.CallbackContext context)
     {
         if (context.started) SwitchWeaponIndex = 0;
+        Debug.Log("1");
     }
     // 字母数字2输入
     public void OnSwitchWeapon2(InputAction.CallbackContext context)
     {
         if (context.started) SwitchWeaponIndex = 1;
+        Debug.Log("2");
     }
     // 字母数字3输入
     public void OnSwitchWeapon3(InputAction.CallbackContext context)
     {
         if (context.started) SwitchWeaponIndex = 2;
+        Debug.Log("3");
     }
 
     // 重置瞬时触发
@@ -100,6 +110,7 @@ public class InputHandler : MonoBehaviour
         FireTriggered = false;    // 重置射击触发
         ReloadTriggered = false;  // 重置装弹触发
         PickupTriggered = false;  // 重置拾取触发
+        DiscardTriggered = false; // 重置丢弃触发
         SwitchWeaponType = 0;
         SwitchWeaponIndex = -1;
     }

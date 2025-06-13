@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 
 
-// 武器拾取器 - 定义可拾取的武器属性
-// 挂载对象：场景中的武器道具
-// 所需组件：Collider (设置为触发器)
+// 武器拾取器
 public class WeaponPickup : MonoBehaviour
 {
     [Header("武器设置")]
@@ -12,50 +10,63 @@ public class WeaponPickup : MonoBehaviour
 
     [Header("视觉效果")]
     [SerializeField] private float rotationSpeed = 45f; // 旋转速度
-    [SerializeField] private float floatHeight = 0.2f; // 浮动高度
+    [SerializeField] private float floatHeight = 0.05f; // 浮动高度
     [SerializeField] private float floatSpeed = 1f; // 浮动速度
 
     private Vector3 startPosition; // 初始位置
-    private Material originalMaterial; // 原始材质
-    private Material highlightMaterial; // 高亮材质
+    private bool isInScene; // 是否在场景中
 
     private void Start()
     {
         // 保存初始位置
         startPosition = transform.position;
 
-        // 获取原始材质
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            originalMaterial = renderer.material;
-
-            // 创建高亮材质
-            highlightMaterial = new Material(Shader.Find("Standard"));
-            highlightMaterial.color = Color.yellow;
-            highlightMaterial.EnableKeyword("_EMISSION");
-            highlightMaterial.SetColor("_EmissionColor", Color.yellow * 0.5f);
-        }
+        // 检查是否在SceneWeapon容器中
+        CheckSceneStatus();
     }
 
     private void Update()
     {
-        // 旋转效果
-        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        // 只有在场景容器中时才执行旋转和浮动
+        if (isInScene)
+        {
+            // 旋转效果
+            transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
 
-        // 浮动效果
-        float newY = startPosition.y + Mathf.Sin(Time.time * floatSpeed) * floatHeight;
-        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+            // 浮动效果
+            float newY = startPosition.y + Mathf.Sin(Time.time * floatSpeed) * floatHeight;
+            transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+        }
     }
 
-    // 高亮显示武器
-    public void Highlight(bool highlight)
+    // 检查武器是否在场景容器中
+    private void CheckSceneStatus()
     {
-        Renderer renderer = GetComponent<Renderer>();
-        if (renderer != null && highlightMaterial != null)
-        {
-            renderer.material = highlight ? highlightMaterial : originalMaterial;
-        }
+        isInScene = transform.parent != null &&
+                    transform.parent.name == "SceneWeapon";
+    }
+
+    // 初始化武器拾取器（用于丢弃的武器）
+    public void Initialize(WeaponBase weapon)
+    {
+        weaponPrefab = weapon;
+        weaponName = weapon.GetWeaponName();
+
+        // 创建武器模型
+        GameObject weaponModel = Instantiate(
+            weapon.GetWeaponModel(),
+            transform.position,
+            Quaternion.identity,
+            transform
+        );
+        weaponModel.name = weaponModel.name.Replace("(Clone)", "");
+
+
+        // 添加到场景容器
+        SceneWeaponManager.Instance.AddWeaponToScene(transform);
+
+        // 更新状态
+        isInScene = true;
     }
 
     // 获取武器预制体
