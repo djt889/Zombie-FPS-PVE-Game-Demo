@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4487001782516385494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7570674400568605649}
+  m_Layer: 7
+  m_Name: Left Hand Target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7570674400568605649
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4487001782516385494}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.38251132, y: 0.32117128, z: -0.33152252, w: 0.8003918}
+  m_LocalPosition: {x: 0.147, y: -0.04, z: 0.191}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5920628141422906895}
+  m_LocalEulerAnglesHint: {x: -23.539, y: 56.87, z: -57.872}
 --- !u!1 &6440599648175510709
 GameObject:
   m_ObjectHideFlags: 0
@@ -15,7 +46,7 @@ GameObject:
   - component: {fileID: -4067256748802681647}
   - component: {fileID: -7279147279953472714}
   m_Layer: 7
-  m_Name: Knife_01
+  m_Name: "M9 \u523A\u5200"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,11 +60,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6440599648175510709}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7570674400568605649}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7315412015990604202
@@ -120,13 +152,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9eab77ee5d870241b1d0598d8af9fba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: "\u519B\u7528\u5315\u9996"
+  weaponName: "M9 \u523A\u5200"
   weaponType: 2
   firePoint: {fileID: 0}
   maxAmmo: 30
-  currentAmmo: 0
   reloadTime: 2
+  bulletType: 
   weaponModel: {fileID: 6440599648175510709}
+  leftHandTarget: {fileID: 7570674400568605649}
+  currentAmmo: 0
   attackRange: 1.5
   attackDamage: 50
   attackCooldown: 0.8
@@ -146,7 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponPrefab: {fileID: -4067256748802681647}
-  weaponName: "\u6B66\u5668"
+  weaponName: 
   rotationSpeed: 45
   floatHeight: 0.02
   floatSpeed: 1

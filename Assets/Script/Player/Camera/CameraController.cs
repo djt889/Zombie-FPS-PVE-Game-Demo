@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+//相机控制器 - 挂载在Player上
 public class CameraController : MonoBehaviour
 {
     [Header("References")]

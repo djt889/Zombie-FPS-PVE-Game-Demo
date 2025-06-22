@@ -221,6 +221,7 @@ public class PlayerStateMachine : MonoBehaviour
                 GetComponent<WeaponPickupHandler>().DropWeapon(currentWeapon);
             }
         }
+        //Debug.Log($"input.FireTriggered: {input.FireTriggered} input.ReloadTriggered {input.ReloadTriggered}");
         // 传递输入到武器管理器
         weaponManager.UpdateWeapon(input.FireTriggered, input.ReloadTriggered);
     }

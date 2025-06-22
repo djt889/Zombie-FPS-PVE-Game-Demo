@@ -1,9 +1,13 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
-// ³¡¾°ÎäÆ÷¹ÜÀíÆ÷
+// åœºæ™¯æ­¦å™¨ç®¡ç†å™¨
 public class SceneWeaponManager : MonoBehaviour
 {
     public static SceneWeaponManager Instance;
+
+    [Header("SceneWeaponå¯¹è±¡")]
+    [SerializeField] private Transform sceneWeapon; // SceneWeaponå¯¹è±¡
 
     private void Awake()
     {
@@ -15,19 +19,46 @@ public class SceneWeaponManager : MonoBehaviour
         {
             Instance = this;
         }
+
+        sceneWeapon = transform;
+
+        SetMountLayers();
     }
 
-    // ½«ÎäÆ÷Ìí¼Óµ½³¡¾°ÈİÆ÷
+    private void SetMountLayers()
+    {
+        if (sceneWeapon != null)
+        {
+            // è®¾ç½®HandleåŠå…¶æ‰€æœ‰å­å¯¹è±¡å±‚çº§ä¸ºPlayer
+            SetLayerRecursive(sceneWeapon, LayerMask.NameToLayer("Weapon"));
+        }
+    }
+
+    // é€’å½’è®¾ç½®å±‚çº§
+    private void SetLayerRecursive(Transform parent, int layer)
+    {
+        parent.gameObject.layer = layer;
+        parent.gameObject.SetActive(true);
+        foreach (Transform child in parent)
+        {
+            SetLayerRecursive(child, layer);
+        }
+    }
+
+    // å°†æ­¦å™¨æ·»åŠ åˆ°åœºæ™¯å®¹å™¨
     public void AddWeaponToScene(Transform weapon)
     {
         weapon.SetParent(transform);
 
-        // Ëæ»úĞı×ª½Ç¶È£¨Ê¹¶ªÆúµÄÎäÆ÷¿´ÆğÀ´×ÔÈ»£©
+        // éšæœºæ—‹è½¬è§’åº¦ï¼ˆä½¿ä¸¢å¼ƒçš„æ­¦å™¨çœ‹èµ·æ¥è‡ªç„¶ï¼‰
         float randomYRotation = Random.Range(0f, 360f);
         weapon.rotation = Quaternion.Euler(0, randomYRotation, 0);
+
+        // ç¡®ä¿å±‚çº§æ­£ç¡®
+        SetLayerRecursive(weapon.transform, LayerMask.NameToLayer("Weapon"));
     }
 
-    // ´Ó³¡¾°ÈİÆ÷ÖĞÒÆ³ıÎäÆ÷
+    // ä»åœºæ™¯å®¹å™¨ä¸­ç§»é™¤æ­¦å™¨
     public void RemoveWeaponFromScene(Transform weapon)
     {
         if (weapon.parent == transform)

@@ -8,7 +8,7 @@ public class WeaponPickupHandler : MonoBehaviour
     [Header("拾取设置")]
     [SerializeField] private float pickupDistance = 3f; // 拾取距离
     [SerializeField] private LayerMask pickupLayer; // 可拾取层
-    [SerializeField] private float dropOffset = 1.5f; // 丢弃偏移距离
+    [SerializeField] private float dropOffset = 1f; // 丢弃偏移距离
 
     [Header("UI提示")]
     [SerializeField] private GameObject pickupPrompt; // 拾取提示UI
@@ -130,21 +130,42 @@ public class WeaponPickupHandler : MonoBehaviour
     // 尝试丢弃武器
     public void DropWeapon(WeaponBase weapon)
     {
-        // 创建武器拾取器
-        string cleanName = weapon.GetWeaponName().Replace("(Clone)", "");
-        GameObject pickupObject = new GameObject($"{cleanName}_Pickup");
 
-        // 添加拾取器组件
-        WeaponPickup pickup = pickupObject.AddComponent<WeaponPickup>();
-        pickup.Initialize(weapon);
+        // 获取武器预制体
+        WeaponBase weaponPrefab = weapon.GetComponent<WeaponPickup>().GetWeaponPrefab();
+        if (weaponPrefab == null)
+        {
+            Debug.LogError($"丢弃武器时无法获取预制体: {weapon.GetWeaponName()}");
+            return;
+        }
+
+        // 直接实例化武器预制体
+        WeaponBase droppedWeapon = Instantiate(weaponPrefab);
+        droppedWeapon.name = weaponPrefab.name;
+
+        // 确保拾取器组件被启用
+        WeaponPickup pickup = droppedWeapon.GetComponent<WeaponPickup>();
+        if (pickup != null)
+        {
+            pickup.enabled = true;
+        }
+        else
+        {
+            // 如果预制体没有WeaponPickup组件，添加一个
+            pickup = droppedWeapon.gameObject.AddComponent<WeaponPickup>();
+            pickup.Initialize(weaponPrefab);
+        }
+
+        // 设置位置（角色前方）
+        Vector3 dropPosition = transform.position + transform.forward * dropOffset;
+        dropPosition.y = 0.2f; // 确保在地面上
+        droppedWeapon.transform.position = dropPosition;
+
+        // 添加到场景容器
+        SceneWeaponManager.Instance.AddWeaponToScene(droppedWeapon.transform);
 
         // 销毁当前手中丢弃的武器
         Destroy(weapon.gameObject);
-
-        // 设置位置（角色脚下）
-        Vector3 dropPosition = transform.position;
-        dropPosition.y = 0.2f; // 确保在地面上
-        pickupObject.transform.position = dropPosition;
 
         Debug.Log($"已丢弃武器: {weapon.GetWeaponName()}");
     }

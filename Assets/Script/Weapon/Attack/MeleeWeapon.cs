@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-// 近战武器类（刀、棍等）
+// 近战武器类 - 挂载在所有近战武器预制体
 public class MeleeWeapon : WeaponBase
 {
     [Header("近战武器设置")]
@@ -26,16 +26,17 @@ public class MeleeWeapon : WeaponBase
     // 近战攻击检测
     private void PerformMeleeAttack()
     {
-        // 射线检测攻击范围内敌人
-        RaycastHit hit;
-        if (Physics.Raycast(firePoint.position, firePoint.forward, out hit, attackRange, attackLayers))
+        // 使用球形检测攻击范围内敌人
+        Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, attackRange, attackLayers);
+
+        foreach (var hitCollider in hitColliders)
         {
-            // 伤害敌人
-            //IDamageable damageable = hit.collider.GetComponent<IDamageable>();
-            //if (damageable != null)
-            //{
-            //    damageable.TakeDamage(attackDamage);
-            //}
+            // 伤害敌人（如果实现了伤害系统）
+            // IDamageable damageable = hitCollider.GetComponent<IDamageable>();
+            // if (damageable != null)
+            // {
+            //     damageable.TakeDamage(attackDamage);
+            // }
         }
     }
 }

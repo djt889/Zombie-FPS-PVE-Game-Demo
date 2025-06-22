@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-
 // 武器拾取器
 public class WeaponPickup : MonoBehaviour
 {
@@ -20,6 +19,13 @@ public class WeaponPickup : MonoBehaviour
     {
         // 保存初始位置
         startPosition = transform.position;
+
+        // 自动检查并设置武器信息
+        if (weaponPrefab == null)
+        {
+            weaponPrefab = GetComponent<WeaponBase>();
+            weaponName = weaponPrefab?.GetWeaponName() ?? "未知武器";
+        }
 
         // 检查是否在SceneWeapon容器中
         CheckSceneStatus();
@@ -46,21 +52,29 @@ public class WeaponPickup : MonoBehaviour
                     transform.parent.name == "SceneWeapon";
     }
 
-    // 初始化武器拾取器（用于丢弃的武器）
-    public void Initialize(WeaponBase weapon)
+    // 初始化武器拾取器
+    public void Initialize(WeaponBase weaponPrefab)
     {
-        weaponPrefab = weapon;
-        weaponName = weapon.GetWeaponName();
+        this.weaponPrefab = weaponPrefab;
+        weaponName = weaponPrefab.GetWeaponName();
 
-        // 创建武器模型
-        GameObject weaponModel = Instantiate(
-            weapon.GetWeaponModel(),
-            transform.position,
-            Quaternion.identity,
-            transform
-        );
-        weaponModel.name = weaponModel.name.Replace("(Clone)", "");
-
+        // 确保有武器模型
+        if (transform.childCount == 0)
+        {
+            Debug.Log("transform:" + transform + "transform.childCount:"+transform.childCount);
+            Instantiate(weaponPrefab.GetWeaponModel(), transform);
+        }
+        else
+        {
+            // 创建武器模型
+            GameObject weaponModel = Instantiate(
+                weaponPrefab.GetWeaponModel(),
+                transform.position,
+                Quaternion.identity,
+                transform
+            );
+            weaponModel.name = weaponModel.name.Replace("(Clone)", "");
+        }
 
         // 添加到场景容器
         SceneWeaponManager.Instance.AddWeaponToScene(transform);

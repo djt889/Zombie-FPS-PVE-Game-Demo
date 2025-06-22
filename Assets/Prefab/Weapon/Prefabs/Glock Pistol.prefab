@@ -106,6 +106,37 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: -1
   m_Mesh: {fileID: 3712014988299530561, guid: fdf00ae655c6f9d4abac02c38bd47b3e, type: 3}
+--- !u!1 &1794137909491327359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5823928828946897799}
+  m_Layer: 7
+  m_Name: Left Hand Target
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5823928828946897799
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794137909491327359}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.65100574, y: 0.043165628, z: 0.35190907, w: 0.67118424}
+  m_LocalPosition: {x: 0.0259, y: -0.0491, z: -0.0429}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7994395200163922544}
+  m_LocalEulerAnglesHint: {x: 57.512, y: 73.933, z: 100.22}
 --- !u!1 &3287438774114289071
 GameObject:
   m_ObjectHideFlags: 0
@@ -150,7 +181,7 @@ GameObject:
   - component: {fileID: 2208982985355473110}
   - component: {fileID: -8248260183597558655}
   m_Layer: 7
-  m_Name: Weapon_01
+  m_Name: Glock Pistol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -210,18 +241,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e613de9d56cf0840a73fc6953d36a21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponName: "\u519B\u7528\u624B\u67AA"
+  weaponName: Glock Pistol
   weaponType: 1
   firePoint: {fileID: 3174253951378741065}
   maxAmmo: 30
-  currentAmmo: 0
   reloadTime: 2
+  bulletType: SecondaryBullet
   weaponModel: {fileID: 4965438261709640327}
-  bulletPrefab: {fileID: 3575611928538805115, guid: 745a87995944ab94caa447ec2061dbc4, type: 3}
+  leftHandTarget: {fileID: 5823928828946897799}
+  currentAmmo: 0
   bulletSpeed: 30
   damage: 35
   fireRate: 0.2
-  recoilForce: 0.5
 --- !u!114 &-8248260183597558655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponPrefab: {fileID: 2208982985355473110}
-  weaponName: "\u6B66\u5668"
+  weaponName: 
   rotationSpeed: 45
   floatHeight: 0.02
   floatSpeed: 1
@@ -376,7 +407,8 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5823928828946897799}
   m_Father: {fileID: 5738456080911321149}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4584101929267674204

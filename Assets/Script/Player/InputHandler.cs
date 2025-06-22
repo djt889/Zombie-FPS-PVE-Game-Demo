@@ -55,7 +55,7 @@ public class InputHandler : MonoBehaviour
     public void OnFire(InputAction.CallbackContext context)
     {
         // 左键按下时触发（支持连发）
-        FireTriggered = context.started;
+        FireTriggered = context.performed;
     }
 
     // 装弹输入
@@ -88,19 +88,16 @@ public class InputHandler : MonoBehaviour
     public void OnSwitchWeapon1(InputAction.CallbackContext context)
     {
         if (context.started) SwitchWeaponIndex = 0;
-        Debug.Log("1");
     }
     // 字母数字2输入
     public void OnSwitchWeapon2(InputAction.CallbackContext context)
     {
         if (context.started) SwitchWeaponIndex = 1;
-        Debug.Log("2");
     }
     // 字母数字3输入
     public void OnSwitchWeapon3(InputAction.CallbackContext context)
     {
         if (context.started) SwitchWeaponIndex = 2;
-        Debug.Log("3");
     }
 
     // 重置瞬时触发
