@@ -107,7 +107,7 @@ public class IKManager : MonoBehaviour
     {
         if (leftHandIK == null) yield break;
 
-        //Debug.Log("开始刷新IK约束...");
+        Debug.Log("开始刷新IK约束...");
 
         // 1. 重置权重强制刷新
         float originalWeight = leftHandIK.weight;
@@ -144,6 +144,6 @@ public class IKManager : MonoBehaviour
         // 5. 恢复权重
         leftHandIK.weight = originalWeight;
 
-        //Debug.Log("IK约束刷新完成");
+        Debug.Log("IK约束刷新完成");
     }
 }

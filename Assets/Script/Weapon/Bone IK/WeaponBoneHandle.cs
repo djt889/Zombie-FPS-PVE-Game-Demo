@@ -9,6 +9,9 @@ public class WeaponBoneHandle : MonoBehaviour
     [Header("Handle对象")]
     [SerializeField] private Transform handle; // Handle对象
 
+    [Header("空手挂载点")]
+    [SerializeField] private Transform emptyHandIK;
+
     [Header("武器挂载点")]
     private Transform primaryMount;   // 主武器挂载点
     private Transform secondaryMount; // 副武器挂载点
@@ -96,11 +99,11 @@ public class WeaponBoneHandle : MonoBehaviour
     {
         // 获取当前活动武器类型对应的挂载点
         Transform activeMount = GetActiveMountPoint();
-        if (activeMount == null || activeMount.childCount == 0) return null;
+        if (activeMount == null || activeMount.childCount == 0) return emptyHandIK;
 
         // 获取挂载点上的武器
         WeaponBase weapon = activeMount.GetChild(0).GetComponent<WeaponBase>();
-        if (weapon == null) return null;
+        if (weapon == null) return emptyHandIK;
 
         // 返回武器的左手目标
         return weapon.GetLeftHandTarget();

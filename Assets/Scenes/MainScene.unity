@@ -2656,6 +2656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handle: {fileID: 0}
+  emptyHandIK: {fileID: 1395969009}
 --- !u!1 &956340748
 GameObject:
   m_ObjectHideFlags: 0

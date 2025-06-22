@@ -54,7 +54,6 @@ public class InputHandler : MonoBehaviour
     // 射击输入
     public void OnFire(InputAction.CallbackContext context)
     {
-        // 左键按下时触发（支持连发）
         FireTriggered = context.performed;
     }
 

@@ -168,7 +168,11 @@ public class WeaponManager : MonoBehaviour
 
     private void UpdateHoldAnimationParameters()
     {
-        //playerAnimator.SetBool(isHoldEmptyHash, isHoldEmpty);
+        playerAnimator.SetBool(isHoldEmptyHash,
+            currentWeaponType != WeaponType.Primary &&
+            currentWeaponType != WeaponType.Secondary &&
+            currentWeaponType != WeaponType.Melee 
+            );
         playerAnimator.SetBool(isHoldPrimaryHash, currentWeaponType == WeaponType.Primary);
         playerAnimator.SetBool(isHoldSecondaryHash, currentWeaponType == WeaponType.Secondary);
         playerAnimator.SetBool(isHoldKnifeHash, currentWeaponType == WeaponType.Melee);
@@ -181,6 +185,16 @@ public class WeaponManager : MonoBehaviour
         {
             case WeaponType.Primary:
                 // 如果是当前武器，清理IK目标
+                if (primaryWeapon != null)
+                {
+                    if (currentWeapon == primaryWeapon && ikManager != null)
+                    {
+                        ikManager.ClearLeftHandTarget();
+                    }
+                    primaryWeapon = null;
+                }
+                break;
+            case WeaponType.Secondary:
                 if (secondaryWeapon != null)
                 {
                     if (currentWeapon == secondaryWeapon && ikManager != null)
@@ -188,16 +202,6 @@ public class WeaponManager : MonoBehaviour
                         ikManager.ClearLeftHandTarget();
                     }
                     secondaryWeapon = null;
-                }
-                break;
-            case WeaponType.Secondary:
-                if (meleeWeapon != null)
-                {
-                    if (currentWeapon == meleeWeapon && ikManager != null)
-                    {
-                        ikManager.ClearLeftHandTarget();
-                    }
-                    meleeWeapon = null;
                 }
                 break;
             case WeaponType.Melee:
@@ -223,7 +227,7 @@ public class WeaponManager : MonoBehaviour
                 // 没有其他武器，设置为空手状态
                 currentWeapon = null;
                 currentWeaponType = WeaponType.Empty;
-                UpdateHoldAnimationParameters(); // 更新空手动画
+                UpdateHoldAnimationParameters();
             }
         }
     }
