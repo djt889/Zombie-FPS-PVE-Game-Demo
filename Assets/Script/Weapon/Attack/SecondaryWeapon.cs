@@ -17,18 +17,22 @@ public class SecondaryWeapon : WeaponBase
         // 减少弹药
         currentAmmo--;
 
-        // 确保有发射点
-        if (firePoint == null)
+        // 确保摄像机已设置
+        if (playerCamera == null)
         {
-            Debug.LogError($"{weaponName} 缺少 firePoint 引用！请设置子弹发射点。");
+            Debug.LogError($"{weaponName}: 摄像机未设置!");
             return;
         }
+
+        // 获取子弹方向和位置
+        Vector3 direction = GetBulletDirection();
+        Vector3 spawnPosition = GetBulletSpawnPosition();
 
         // 使用多类型对象池获取特定子弹
         GameObject bullet = MultiBulletPool.Instance.GetBullet(
             bulletType,
-            firePoint.position,
-            firePoint.rotation
+            spawnPosition,
+            Quaternion.LookRotation(direction)
         );
 
         if (bullet == null)
@@ -41,14 +45,15 @@ public class SecondaryWeapon : WeaponBase
         Bullet bulletScript = bullet.GetComponent<Bullet>();
         if (bulletScript)
         {
-            bulletScript.SetVelocity(firePoint.forward * bulletSpeed);
+            bulletScript.SetVelocity(direction * bulletSpeed);
             bulletScript.SetDamage(damage);
+            bulletScript.SetMaxRange(maxRange);
         }
         else
         {
             // 回退方案
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            if (rb) rb.velocity = firePoint.forward * bulletSpeed;
+            if (rb) rb.velocity = direction * bulletSpeed;
         }
 
         // 触发开火事件

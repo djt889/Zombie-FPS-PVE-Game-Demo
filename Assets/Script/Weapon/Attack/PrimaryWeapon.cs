@@ -7,7 +7,7 @@ public class PrimaryWeapon : WeaponBase
     [SerializeField] private float bulletSpeed = 25f;  // 子弹速度
     [SerializeField] private float damage = 25f;       // 伤害值
     [SerializeField] private float fireRate = 0.1f;    // 射击速率
-    [SerializeField] private float spreadAngle = 1.5f; // 子弹散布角度
+    [SerializeField] private float spreadAngle = 1f; // 子弹散布角度
 
     protected override void Fire()
     {
@@ -18,22 +18,21 @@ public class PrimaryWeapon : WeaponBase
         // 减少弹药
         currentAmmo--;
 
-        // 确保有发射点
-        if (firePoint == null)
+        // 确保摄像机已设置
+        if (playerCamera == null)
         {
-            Debug.LogError($"{weaponName} 缺少 firePoint 引用！请设置子弹发射点。");
+            Debug.LogError($"{weaponName}: 摄像机未设置!");
             return;
         }
-        // 计算随机散布
-        Vector3 spread = firePoint.forward;
-        spread = Quaternion.AngleAxis(Random.Range(-spreadAngle, spreadAngle), firePoint.up) * spread;
-        spread = Quaternion.AngleAxis(Random.Range(-spreadAngle, spreadAngle), firePoint.right) * spread;
+        // 获取子弹方向和位置
+        Vector3 direction = GetBulletDirection(spreadAngle);
+        Vector3 spawnPosition = GetBulletSpawnPosition();
 
         // 使用多类型对象池获取特定子弹
         GameObject bullet = MultiBulletPool.Instance.GetBullet(
             bulletType,
-            firePoint.position,
-            Quaternion.LookRotation(spread)
+            spawnPosition,
+            Quaternion.LookRotation(direction)
         );
 
         if (bullet == null)
@@ -46,14 +45,15 @@ public class PrimaryWeapon : WeaponBase
         Bullet bulletScript = bullet.GetComponent<Bullet>();
         if (bulletScript)
         {
-            bulletScript.SetVelocity(spread * bulletSpeed);
+            bulletScript.SetVelocity(direction * bulletSpeed);
             bulletScript.SetDamage(damage);
+            bulletScript.SetMaxRange(maxRange);
         }
         else
         {
-            // 回退方案：直接设置刚体速度
+            // 直接设置刚体速度
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            if (rb) rb.velocity = spread * bulletSpeed;
+            if (rb) rb.velocity = direction * bulletSpeed;
         }
 
         // 触发开火事件

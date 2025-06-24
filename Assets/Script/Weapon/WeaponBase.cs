@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using System;
 
 // 武器基类，定义所有武器的通用接口
@@ -7,9 +8,12 @@ public abstract class WeaponBase : MonoBehaviour
     [Header("通用武器设置")]
     public string weaponName; // 武器名称
     [SerializeField] protected WeaponType weaponType; // 武器类型
-    [SerializeField] protected Transform firePoint;   // 子弹射击点
     [SerializeField] protected int maxAmmo = 30;      // 最大弹药量
     [SerializeField] protected float reloadTime = 2f; // 装弹时间
+
+    [Header("射击设置")]
+    [SerializeField] protected Camera playerCamera; // 玩家摄像机（必须设置）
+    [SerializeField] protected float maxRange = 100f; // 最大射程
 
     [Header("子弹设置")]
     [SerializeField] protected string bulletType; // 子弹类型标识符
@@ -38,11 +42,54 @@ public abstract class WeaponBase : MonoBehaviour
     // 初始化方法
     protected virtual void Awake()
     {
+        // 自动获取主摄像机（如果未设置）
+        if (playerCamera == null)
+        {
+            playerCamera = Camera.main;
+            if (playerCamera == null)
+            {
+                Debug.LogError($"{weaponName}: 未找到主摄像机!");
+            }
+        }
+
         // 初始化弹药量
         currentAmmo = maxAmmo;
 
         // 初始状态为未装备
         isEquipped = false;
+    }
+
+    // 从屏幕中心发射射线
+    protected Ray GetCenterRay()
+    {
+        // 获取屏幕中心点
+        Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0);
+        return playerCamera.ScreenPointToRay(screenCenter);
+    }
+
+    // 获取子弹方向（考虑散布）
+    protected Vector3 GetBulletDirection(float spreadAngle = 0f)
+    {
+        Ray ray = GetCenterRay();
+        Vector3 direction = ray.direction;
+
+        // 添加随机散布
+        if (spreadAngle > 0f)
+        {
+            direction = Quaternion.AngleAxis(UnityEngine.Random.Range(-spreadAngle, spreadAngle), playerCamera.transform.up) * direction;
+            direction = Quaternion.AngleAxis(UnityEngine.Random.Range(-spreadAngle, spreadAngle), playerCamera.transform.right) * direction;
+        }
+
+        return direction;
+    }
+
+    // 获取子弹发射位置
+    protected Vector3 GetBulletSpawnPosition()
+    {
+        Ray ray = GetCenterRay();
+
+        // 从摄像机位置向前偏移一点，避免与玩家碰撞
+        return ray.origin + ray.direction * 0.2f;
     }
 
     // 获取干净的武器名称（不含Clone）

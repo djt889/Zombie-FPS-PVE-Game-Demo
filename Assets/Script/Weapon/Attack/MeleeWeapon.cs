@@ -27,7 +27,7 @@ public class MeleeWeapon : WeaponBase
     private void PerformMeleeAttack()
     {
         // 使用球形检测攻击范围内敌人
-        Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, attackRange, attackLayers);
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange, attackLayers);
 
         foreach (var hitCollider in hitColliders)
         {
