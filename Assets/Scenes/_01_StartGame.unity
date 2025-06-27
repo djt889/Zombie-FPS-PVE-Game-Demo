@@ -1788,6 +1788,50 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 22400000, guid: 2d0757e218a2f8048918b582a7febbc0, type: 3}
   m_PrefabInstance: {fileID: 1166917923}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &683913339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 683913341}
+  - component: {fileID: 683913340}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &683913340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683913339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 953a112ba2f5b4049a524c5199d7b749, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &683913341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683913339}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.9251868, y: 12.759602, z: -822.9109}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &698536761
 GameObject:
   m_ObjectHideFlags: 0
@@ -2269,16 +2313,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 748421177}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 803154e2a0b488048adcc75f173dcc50, type: 3}
+  m_Script: {fileID: 11500000, guid: 81b8df48339819741a55f9d9ad69ca32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSensitivity: 12
-  smoothSpeed: 4
-  parallaxFactor: 0.8
-  maxHorizontalOffset: 80
+  moveSensitivity: 0.2
+  smoothSpeed: 5
+  enableParallax: 1
+  parallaxFactor: 0.5
+  enableBoundaries: 1
+  maxHorizontalOffset: 50
   maxVerticalOffset: 30
   currentMousePosition: {x: 0, y: 0}
   calculatedOffset: {x: 0, y: 0}
+  targetPosition: {x: 0, y: 0}
+  initialPosition: {x: 0, y: 0}
+  rectTransform: {fileID: 0}
 --- !u!1001 &784365606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3916,3 +3965,4 @@ SceneRoots:
   - {fileID: 607110610}
   - {fileID: 748305005}
   - {fileID: 1386182932}
+  - {fileID: 683913341}
