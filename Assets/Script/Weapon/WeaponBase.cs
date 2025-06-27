@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 // 武器基类，定义所有武器的通用接口
@@ -10,6 +11,9 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected WeaponType weaponType; // 武器类型
     [SerializeField] protected int maxAmmo = 30;      // 最大弹药量
     [SerializeField] protected float reloadTime = 2f; // 装弹时间
+
+    [Header("武器UI设置")]
+    [SerializeField] private Sprite weaponUISprite; // 武器UI图标
 
     [Header("射击设置")]
     [SerializeField] protected Camera playerCamera; // 玩家摄像机（必须设置）
@@ -28,7 +32,7 @@ public abstract class WeaponBase : MonoBehaviour
     [SerializeField] protected int currentAmmo; // 当前弹药量
     protected bool isReloading; // 是否正在装弹
     protected float nextFireTime; // 下次可射击时间
-    private bool isEquipped; // 是否已装备
+    protected bool isEquipped; // 是否已装备
     protected bool isFiring; // 射击状态
 
     // 事件系统
@@ -209,4 +213,7 @@ public abstract class WeaponBase : MonoBehaviour
 
     // 获取左手目标点
     public Transform GetLeftHandTarget() => leftHandTarget;
+
+    // 获取武器UI图标
+    public Sprite GetWeaponUISprite() => weaponUISprite;
 }

@@ -243,9 +243,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Glock Pistol
   weaponType: 1
-  firePoint: {fileID: 3174253951378741065}
   maxAmmo: 30
   reloadTime: 2
+  weaponUISprite: {fileID: 21300010, guid: 0bd96f6f4899f644ea1ffd9b4735a5e6, type: 3}
+  playerCamera: {fileID: 0}
+  maxRange: 100
   bulletType: SecondaryBullet
   weaponModel: {fileID: 4965438261709640327}
   leftHandTarget: {fileID: 5823928828946897799}

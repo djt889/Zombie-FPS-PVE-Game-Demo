@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 // 武器管理系统
 public class WeaponManager : MonoBehaviour
@@ -12,6 +13,15 @@ public class WeaponManager : MonoBehaviour
     [Header("当前装备")]
     public WeaponBase currentWeapon; // 当前装备的武器
     public WeaponType currentWeaponType = WeaponType.Empty; // 当前武器类型
+
+    [Header("武器UI设置")]
+    [SerializeField] private Image primaryWeaponUI; // 主武器UI
+    [SerializeField] private GameObject primaryAmmoUI; // 主武器子弹UI
+    [SerializeField] private Text primaryAmmoText; // 主武器弹药文本
+    [SerializeField] private Image secondaryWeaponUI; // 副武器UI
+    [SerializeField] private GameObject secondaryAmmoUI; // 副武器子弹UI
+    [SerializeField] private Text secondaryAmmoText; // 副武器弹药文本
+    [SerializeField] private Image meleeWeaponUI; // 近战武器UI
 
     [Header("动画设置")]
     private readonly int isHoldEmptyHash = Animator.StringToHash("IsHoldEmpty"); // 空手 TODO
@@ -27,6 +37,12 @@ public class WeaponManager : MonoBehaviour
     // 武器切换参数
     private float lastSwitchTime; // 上次切换武器的时间
     private const float switchCooldown = 0.1f; // 切换冷却时间
+
+    private void Awake()
+    {
+        // 初始化UI状态
+        UpdateWeaponUI();
+    }
 
     // 添加武器到指定槽位
     public WeaponBase AddWeapon(WeaponBase newWeapon)
@@ -97,6 +113,8 @@ public class WeaponManager : MonoBehaviour
         }
 
         Debug.Log($"装备武器: {newWeapon.GetWeaponName()}");
+        // 更新UI显示
+        UpdateWeaponUI();
         return replacedWeapon;
     }
 
@@ -155,6 +173,10 @@ public class WeaponManager : MonoBehaviour
             currentWeaponType = WeaponType.Empty;
             Debug.LogWarning($"尝试装备武器失败: {type}");
         }
+        // 更新UI显示
+        UpdateWeaponUI();
+        // 更新子弹UI显示
+        UpdateBulletUIVisibility();
     }
 
     private IEnumerator DelayedIKRefresh()
@@ -187,30 +209,21 @@ public class WeaponManager : MonoBehaviour
                 // 如果是当前武器，清理IK目标
                 if (primaryWeapon != null)
                 {
-                    if (currentWeapon == primaryWeapon && ikManager != null)
-                    {
-                        ikManager.ClearLeftHandTarget();
-                    }
+                    if (currentWeapon == primaryWeapon && ikManager != null) ikManager.ClearLeftHandTarget();
                     primaryWeapon = null;
                 }
                 break;
             case WeaponType.Secondary:
                 if (secondaryWeapon != null)
                 {
-                    if (currentWeapon == secondaryWeapon && ikManager != null)
-                    {
-                        ikManager.ClearLeftHandTarget();
-                    }
+                    if (currentWeapon == secondaryWeapon && ikManager != null) ikManager.ClearLeftHandTarget();
                     secondaryWeapon = null;
                 }
                 break;
             case WeaponType.Melee:
                 if (meleeWeapon != null)
                 {
-                    if (currentWeapon == meleeWeapon && ikManager != null)
-                    {
-                        ikManager.ClearLeftHandTarget();
-                    }
+                    if (currentWeapon == meleeWeapon && ikManager != null) ikManager.ClearLeftHandTarget();
                     meleeWeapon = null;
                 }
                 break;
@@ -230,6 +243,103 @@ public class WeaponManager : MonoBehaviour
                 UpdateHoldAnimationParameters();
             }
         }
+
+        // 更新UI显示
+        UpdateWeaponUI();
+        // 更新子弹UI显示
+        UpdateBulletUIVisibility();
+    }
+
+    // 更新子弹UI显示
+    private void UpdateBulletUIVisibility()
+    {
+        // 根据当前武器类型显示/隐藏子弹UI
+        switch (currentWeaponType)
+        {
+            case WeaponType.Primary:
+                primaryAmmoUI.SetActive(true);
+                secondaryAmmoUI.SetActive(false);
+                break;
+
+            case WeaponType.Secondary:
+                primaryAmmoUI.SetActive(false);
+                secondaryAmmoUI.SetActive(true);
+                break;
+
+            case WeaponType.Melee:
+                primaryAmmoUI.SetActive(false);
+                secondaryAmmoUI.SetActive(false);
+                break;
+
+            default:
+                primaryAmmoUI.SetActive(false);
+                secondaryAmmoUI.SetActive(false);
+                break;
+        }
+    }
+
+    // 更新武器UI显示
+    private void UpdateWeaponUI()
+    {
+        // 更新主武器UI
+        UpdateSlotUI(WeaponType.Primary, primaryWeapon, primaryWeaponUI, primaryAmmoText);
+
+        // 更新副武器UI
+        UpdateSlotUI(WeaponType.Secondary, secondaryWeapon, secondaryWeaponUI, secondaryAmmoText);
+
+        // 更新近战武器UI
+        UpdateSlotUI(WeaponType.Melee, meleeWeapon, meleeWeaponUI, null);
+    }
+
+    // 更新单个槽位UI
+    private void UpdateSlotUI(WeaponType type, WeaponBase weapon, Image uiImage, Text ammoText)
+    {
+        // 如果有武器
+        if (weapon != null)
+        {
+            // 显示UI元素
+            uiImage.gameObject.SetActive(true);
+
+            // 设置武器图标（背景图片）
+            Sprite icon = weapon.GetWeaponUISprite();
+            if (icon != null)
+            {
+                uiImage.sprite = icon;
+            }
+
+            // 设置弹药显示（如果有）
+            if (ammoText != null)
+            {
+                var (current, max) = weapon.GetAmmoStatus();
+                ammoText.text = $"{current}/{max}";
+                ammoText.gameObject.SetActive(true);
+            }
+
+            // 设置透明度（无渐变效果）
+            bool isSelected = currentWeaponType == type;
+            SetSlotTransparency(uiImage, ammoText, isSelected);
+        }
+        else
+        {
+            // 没有武器时隐藏UI元素
+            uiImage.gameObject.SetActive(false);
+            if (ammoText != null) ammoText.gameObject.SetActive(false);
+        }
+    }
+
+    // 设置槽位透明度（无渐变）
+    private void SetSlotTransparency(Image uiImage, Text ammoText, bool isSelected)
+    {
+        Color targetColor = isSelected ? new Color(1, 1, 1, 1) : new Color(1, 1, 1, 185f / 255f);
+
+        // 设置UI图片透明度
+        uiImage.color = targetColor;
+
+        // 设置弹药文本透明度
+        if (ammoText != null)
+        {
+            ammoText.color = targetColor;
+        }
     }
 
     // 更新武器逻辑
@@ -238,10 +348,39 @@ public class WeaponManager : MonoBehaviour
         if (currentWeapon == null) return;
 
         // 装弹处理
-        if (reloadInput && CanReload()) currentWeapon.StartReload();
+        if (reloadInput && CanReload())
+        {
+            currentWeapon.StartReload();
+            // 装弹后更新UI
+            UpdateAmmoUI();
+        }
 
         // 武器更新
         currentWeapon.UpdateWeapon(fireInput);
+
+        // 射击后更新弹药显示
+        if (fireInput)
+        {
+            UpdateAmmoUI();
+        }
+    }
+
+    // 只更新弹药UI（优化性能）
+    private void UpdateAmmoUI()
+    {
+        // 更新主武器弹药
+        if (primaryWeapon != null && primaryAmmoText != null && primaryAmmoText.gameObject.activeSelf)
+        {
+            var (current, max) = primaryWeapon.GetAmmoStatus();
+            primaryAmmoText.text = $"{current}/{max}";
+        }
+
+        // 更新副武器弹药
+        if (secondaryWeapon != null && secondaryAmmoText != null && secondaryAmmoText.gameObject.activeSelf)
+        {
+            var (current, max) = secondaryWeapon.GetAmmoStatus();
+            secondaryAmmoText.text = $"{current}/{max}";
+        }
     }
 
     // 判断是否可以装弹

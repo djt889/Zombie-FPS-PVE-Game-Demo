@@ -154,9 +154,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: "M9 \u523A\u5200"
   weaponType: 2
-  firePoint: {fileID: 0}
   maxAmmo: 30
   reloadTime: 2
+  weaponUISprite: {fileID: 21300038, guid: 0bd96f6f4899f644ea1ffd9b4735a5e6, type: 3}
+  playerCamera: {fileID: 0}
+  maxRange: 100
   bulletType: 
   weaponModel: {fileID: 6440599648175510709}
   leftHandTarget: {fileID: 7570674400568605649}

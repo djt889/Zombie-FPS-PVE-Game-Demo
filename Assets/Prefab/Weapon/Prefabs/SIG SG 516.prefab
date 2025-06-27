@@ -237,9 +237,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: 'SIG SG 516 '
   weaponType: 0
-  firePoint: {fileID: 558334365904935873}
   maxAmmo: 30
   reloadTime: 2
+  weaponUISprite: {fileID: 21300046, guid: 0bd96f6f4899f644ea1ffd9b4735a5e6, type: 3}
+  playerCamera: {fileID: 0}
+  maxRange: 100
   bulletType: PrimaryBullet
   weaponModel: {fileID: 5786097810451525583}
   leftHandTarget: {fileID: 6505534740241107340}
