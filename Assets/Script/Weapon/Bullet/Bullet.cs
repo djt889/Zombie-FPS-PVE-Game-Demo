@@ -1,15 +1,15 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    [Header("×Óµ¯ÉèÖÃ")]
-    [SerializeField] private float lifetime = 5f; // ×Óµ¯´æÔÚÊ±¼ä
-    [SerializeField] private float baseDamage = 10f;  // »ù´¡ÉËº¦Öµ
+    [Header("å­å¼¹è®¾ç½®")]
+    [SerializeField] private float lifetime = 5f; // å­å¼¹å­˜åœ¨æ—¶é—´
+    [SerializeField] private float baseDamage = 10f;  // åŸºç¡€ä¼¤å®³å€¼
 
-    private float actualDamage; // Êµ¼ÊÉËº¦Öµ
-    private float maxRange = 100f; // ×î´óÉä³Ì
-    private float traveledDistance; // ÒÑ·ÉĞĞ¾àÀë
-    private Vector3 startPosition; // ÆğÊ¼Î»ÖÃ
+    private float actualDamage; // å®é™…ä¼¤å®³å€¼
+    private float maxRange = 100f; // æœ€å¤§å°„ç¨‹
+    private float traveledDistance; // å·²é£è¡Œè·ç¦»
+    private Vector3 startPosition; // èµ·å§‹ä½ç½®
     private Rigidbody rb;
 
     private void Awake()
@@ -18,45 +18,45 @@ public class Bullet : MonoBehaviour
         if (rb == null)
         {
             rb = gameObject.AddComponent<Rigidbody>();
-            rb.useGravity = false; // Ä¬ÈÏ²»Ê¹ÓÃÖØÁ¦
+            rb.useGravity = false; // é»˜è®¤ä¸ä½¿ç”¨é‡åŠ›
         }
     }
 
     private void OnEnable()
     {
-        // ÖØÖÃ×´Ì¬
+        // é‡ç½®çŠ¶æ€
         traveledDistance = 0f;
         startPosition = transform.position;
 
-        // ¼¤»îÊ±ÉèÖÃ×Ô¶¯»ØÊÕ
+        // æ¿€æ´»æ—¶è®¾ç½®è‡ªåŠ¨å›æ”¶
         Invoke(nameof(ReturnToPool), lifetime);
     }
 
     private void Update()
     {
-        // ¼ÆËãÒÑ·ÉĞĞ¾àÀë
+        // è®¡ç®—å·²é£è¡Œè·ç¦»
         traveledDistance = Vector3.Distance(startPosition, transform.position);
 
-        // ³¬¹ı×î´óÉä³Ì×Ô¶¯»ØÊÕ
+        // è¶…è¿‡æœ€å¤§å°„ç¨‹è‡ªåŠ¨å›æ”¶
         if (traveledDistance > maxRange)
         {
             ReturnToPool();
         }
     }
 
-    // ÉèÖÃ×Óµ¯ËÙ¶È
+    // è®¾ç½®å­å¼¹é€Ÿåº¦
     public void SetVelocity(Vector3 velocity)
     {
         if (rb) rb.velocity = velocity;
     }
 
-    // ÉèÖÃ×Óµ¯ÉËº¦
+    // è®¾ç½®å­å¼¹ä¼¤å®³
     public void SetDamage(float damage)
     {
         actualDamage = damage;
     }
 
-    // ÉèÖÃ×î´óÉä³Ì
+    // è®¾ç½®æœ€å¤§å°„ç¨‹
     public void SetMaxRange(float range)
     {
         maxRange = range;
@@ -64,30 +64,30 @@ public class Bullet : MonoBehaviour
 
     private void OnDisable()
     {
-        // ½ûÓÃÊ±È¡Ïûµ÷ÓÃ
+        // ç¦ç”¨æ—¶å–æ¶ˆè°ƒç”¨
         CancelInvoke(nameof(ReturnToPool));
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // ÉËº¦´¦ÀíÂß¼­
+        // ä¼¤å®³å¤„ç†é€»è¾‘
         IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
         if (damageable != null)
         {
             damageable.TakeDamage(actualDamage);
         }
 
-        // ´¥·¢×¼ĞÇÃüÖĞĞ§¹û
+        // è§¦å‘å‡†æ˜Ÿå‘½ä¸­æ•ˆæœ
         SimpleCrosshair crosshair = FindObjectOfType<SimpleCrosshair>();
         if (crosshair != null)
         {
             crosshair.ShowHitIndicator();
         }
-    
+
         ReturnToPool();
     }
 
-    // ·µ»Ø¶ÔÏó³Ø
+    // è¿”å›å¯¹è±¡æ± 
     private void ReturnToPool()
     {
         MultiBulletPool.Instance.ReturnBullet(gameObject);

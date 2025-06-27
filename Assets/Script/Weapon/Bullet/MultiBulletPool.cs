@@ -1,22 +1,22 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
-// ¶àÀàĞÍ×Óµ¯³Ø¹ÜÀíÆ÷£¨¹ÒÔØÔÚ³¡¾°ÖĞµÄ¿Õ¶ÔÏóÉÏ£©
+// å¤šç±»å‹å­å¼¹æ± ç®¡ç†å™¨ï¼ˆæŒ‚è½½åœ¨åœºæ™¯ä¸­çš„ç©ºå¯¹è±¡ä¸Šï¼‰
 public class MultiBulletPool : MonoBehaviour
 {
-    public static MultiBulletPool Instance; // µ¥ÀıÊµÀı
+    public static MultiBulletPool Instance; // å•ä¾‹å®ä¾‹
 
     [System.Serializable]
     public class BulletPoolSetting
     {
-        public string bulletType;       // ×Óµ¯ÀàĞÍ±êÊ¶·û
-        public GameObject prefab;       // ×Óµ¯Ô¤ÖÆÌå
-        public int initialSize = 20;    // ³õÊ¼³Ø´óĞ¡
-        public int maxSize = 100;       // ×î´ó³Ø´óĞ¡
-        public bool expandable = true;  // ÊÇ·ñ¿ÉÀ©Õ¹
+        public string bulletType;       // å­å¼¹ç±»å‹æ ‡è¯†ç¬¦
+        public GameObject prefab;       // å­å¼¹é¢„åˆ¶ä½“
+        public int initialSize = 20;    // åˆå§‹æ± å¤§å°
+        public int maxSize = 100;       // æœ€å¤§æ± å¤§å°
+        public bool expandable = true;  // æ˜¯å¦å¯æ‰©å±•
     }
 
-    [Header("×Óµ¯³ØÉèÖÃ")]
+    [Header("å­å¼¹æ± è®¾ç½®")]
     public List<BulletPoolSetting> poolSettings = new List<BulletPoolSetting>();
 
     private Dictionary<string, Queue<GameObject>> bulletPools = new Dictionary<string, Queue<GameObject>>();
@@ -24,7 +24,7 @@ public class MultiBulletPool : MonoBehaviour
 
     private void Awake()
     {
-        // ÊµÏÖµ¥ÀıÄ£Ê½
+        // å®ç°å•ä¾‹æ¨¡å¼
         if (Instance == null)
         {
             Instance = this;
@@ -36,15 +36,15 @@ public class MultiBulletPool : MonoBehaviour
         }
     }
 
-    // ³õÊ¼»¯ËùÓĞ×Óµ¯³Ø
+    // åˆå§‹åŒ–æ‰€æœ‰å­å¼¹æ± 
     private void InitializePools()
     {
-        // ½«ÉèÖÃ×ª»»Îª×ÖµäÒÔ±ã¿ìËÙ²éÕÒ
+        // å°†è®¾ç½®è½¬æ¢ä¸ºå­—å…¸ä»¥ä¾¿å¿«é€ŸæŸ¥æ‰¾
         foreach (var setting in poolSettings)
         {
             poolSettingsDict[setting.bulletType] = setting;
 
-            // ³õÊ¼»¯Ã¿¸öÀàĞÍµÄ³Ø
+            // åˆå§‹åŒ–æ¯ä¸ªç±»å‹çš„æ± 
             var queue = new Queue<GameObject>();
             for (int i = 0; i < setting.initialSize; i++)
             {
@@ -55,26 +55,26 @@ public class MultiBulletPool : MonoBehaviour
         }
     }
 
-    // ´´½¨ĞÂ×Óµ¯
+    // åˆ›å»ºæ–°å­å¼¹
     private GameObject CreateNewBullet(BulletPoolSetting setting)
     {
         GameObject bullet = Instantiate(setting.prefab, transform);
         bullet.SetActive(false);
 
-        // Ìí¼Ó×Óµ¯ÀàĞÍ±êÊ¶×é¼ş
+        // æ·»åŠ å­å¼¹ç±»å‹æ ‡è¯†ç»„ä»¶
         var typeInfo = bullet.AddComponent<BulletTypeInfo>();
         typeInfo.bulletType = setting.bulletType;
 
         return bullet;
     }
 
-    // »ñÈ¡×Óµ¯
+    // è·å–å­å¼¹
     public GameObject GetBullet(string bulletType, Vector3 position, Quaternion rotation)
     {
-        // ¼ì²é×Óµ¯ÀàĞÍÊÇ·ñ´æÔÚ
+        // æ£€æŸ¥å­å¼¹ç±»å‹æ˜¯å¦å­˜åœ¨
         if (!bulletPools.ContainsKey(bulletType))
         {
-            Debug.LogError($"Î´ÕÒµ½×Óµ¯ÀàĞÍ: {bulletType}");
+            Debug.LogError($"æœªæ‰¾åˆ°å­å¼¹ç±»å‹: {bulletType}");
             return null;
         }
 
@@ -83,54 +83,54 @@ public class MultiBulletPool : MonoBehaviour
 
         GameObject bullet = null;
 
-        // ³¢ÊÔ´Ó³ØÖĞÈ¡³ö×Óµ¯
+        // å°è¯•ä»æ± ä¸­å–å‡ºå­å¼¹
         if (pool.Count > 0)
         {
             bullet = pool.Dequeue();
         }
-        // Èç¹û³ØÎª¿ÕÇÒ¿ÉÀ©Õ¹£¬´´½¨ĞÂ×Óµ¯
+        // å¦‚æœæ± ä¸ºç©ºä¸”å¯æ‰©å±•ï¼Œåˆ›å»ºæ–°å­å¼¹
         else if (setting.expandable && pool.Count < setting.maxSize)
         {
             bullet = CreateNewBullet(setting);
         }
         else
         {
-            Debug.LogWarning($"×Óµ¯³ØÒÑÂú: {bulletType}");
+            Debug.LogWarning($"å­å¼¹æ± å·²æ»¡: {bulletType}");
             return null;
         }
 
-        // ÉèÖÃ×Óµ¯Î»ÖÃºÍĞı×ª
+        // è®¾ç½®å­å¼¹ä½ç½®å’Œæ—‹è½¬
         bullet.transform.SetPositionAndRotation(position, rotation);
         bullet.SetActive(true);
 
         return bullet;
     }
 
-    // ·µ»Ø×Óµ¯µ½³ØÖĞ
+    // è¿”å›å­å¼¹åˆ°æ± ä¸­
     public void ReturnBullet(GameObject bullet)
     {
-        // »ñÈ¡×Óµ¯ÀàĞÍĞÅÏ¢
+        // è·å–å­å¼¹ç±»å‹ä¿¡æ¯
         var typeInfo = bullet.GetComponent<BulletTypeInfo>();
         if (typeInfo == null)
         {
-            Debug.LogError("×Óµ¯È±ÉÙBulletTypeInfo×é¼ş");
+            Debug.LogError("å­å¼¹ç¼ºå°‘BulletTypeInfoç»„ä»¶");
             return;
         }
 
         string bulletType = typeInfo.bulletType;
 
-        // ¼ì²é×Óµ¯ÀàĞÍÊÇ·ñ´æÔÚ
+        // æ£€æŸ¥å­å¼¹ç±»å‹æ˜¯å¦å­˜åœ¨
         if (!bulletPools.ContainsKey(bulletType))
         {
-            Debug.LogError($"ÎŞ·¨·µ»Ø×Óµ¯: Î´ÖªÀàĞÍ {bulletType}");
+            Debug.LogError($"æ— æ³•è¿”å›å­å¼¹: æœªçŸ¥ç±»å‹ {bulletType}");
             return;
         }
 
-        // ÖØÖÃ×Óµ¯×´Ì¬
+        // é‡ç½®å­å¼¹çŠ¶æ€
         bullet.SetActive(false);
         bullet.transform.SetParent(transform);
 
-        // ÖØÖÃ¸ÕÌåËÙ¶È
+        // é‡ç½®åˆšä½“é€Ÿåº¦
         Rigidbody rb = bullet.GetComponent<Rigidbody>();
         if (rb)
         {
@@ -138,12 +138,12 @@ public class MultiBulletPool : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        // ½«×Óµ¯·Å»Ø³ØÖĞ
+        // å°†å­å¼¹æ”¾å›æ± ä¸­
         bulletPools[bulletType].Enqueue(bullet);
     }
 }
 
-// ×Óµ¯ÀàĞÍ±êÊ¶×é¼ş£¨×Ô¶¯Ìí¼Óµ½×Óµ¯ÉÏ£©
+// å­å¼¹ç±»å‹æ ‡è¯†ç»„ä»¶ï¼ˆè‡ªåŠ¨æ·»åŠ åˆ°å­å¼¹ä¸Šï¼‰
 public class BulletTypeInfo : MonoBehaviour
 {
     public string bulletType;

@@ -1,25 +1,25 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 
-// ¼òµ¥µÄ×¼ĞÇµã¿ØÖÆÆ÷£¨¹ÒÔØÔÚUI CanvasÉÏ£©
+// ç®€å•çš„å‡†æ˜Ÿç‚¹æ§åˆ¶å™¨ï¼ˆæŒ‚è½½åœ¨UI Canvasä¸Šï¼‰
 public class SimpleCrosshair : MonoBehaviour
 {
-    [Header("×¼ĞÇÉèÖÃ")]
-    [SerializeField] private Image crosshairDot; // ×¼ĞÇµãUIÍ¼Ïñ
-    [SerializeField] private Color defaultColor = Color.white; // Ä¬ÈÏÑÕÉ«
-    [SerializeField] private Color hitColor = Color.red; // ÃüÖĞÑÕÉ«
-    [SerializeField] private float hitIndicatorDuration = 0.1f; // ÃüÖĞÖ¸Ê¾³ÖĞøÊ±¼ä
+    [Header("å‡†æ˜Ÿè®¾ç½®")]
+    [SerializeField] private Image crosshairDot; // å‡†æ˜Ÿç‚¹UIå›¾åƒ
+    [SerializeField] private Color defaultColor = Color.white; // é»˜è®¤é¢œè‰²
+    [SerializeField] private Color hitColor = Color.red; // å‘½ä¸­é¢œè‰²
+    [SerializeField] private float hitIndicatorDuration = 0.1f; // å‘½ä¸­æŒ‡ç¤ºæŒç»­æ—¶é—´
 
     private void Start()
     {
-        // È·±£×¼ĞÇµã³õÊ¼¿É¼û
+        // ç¡®ä¿å‡†æ˜Ÿç‚¹åˆå§‹å¯è§
         if (crosshairDot != null)
         {
             crosshairDot.color = defaultColor;
         }
     }
 
-    // ÏÔÊ¾ÃüÖĞĞ§¹û
+    // æ˜¾ç¤ºå‘½ä¸­æ•ˆæœ
     public void ShowHitIndicator()
     {
         if (crosshairDot != null)
@@ -29,7 +29,7 @@ public class SimpleCrosshair : MonoBehaviour
         }
     }
 
-    // ÖØÖÃ×¼ĞÇÑÕÉ«
+    // é‡ç½®å‡†æ˜Ÿé¢œè‰²
     private void ResetCrosshair()
     {
         if (crosshairDot != null)
@@ -38,7 +38,7 @@ public class SimpleCrosshair : MonoBehaviour
         }
     }
 
-    // ÏÔÊ¾/Òş²Ø×¼ĞÇ
+    // æ˜¾ç¤º/éšè—å‡†æ˜Ÿ
     public void SetCrosshairVisible(bool visible)
     {
         if (crosshairDot != null)

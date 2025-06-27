@@ -1,25 +1,25 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-// IK ¹ÜÀíÆ÷
+// IK ç®¡ç†å™¨
 public class IKManager : MonoBehaviour
 {
-    [Header("IK ×é¼ş")]
-    [SerializeField] private TwoBoneIKConstraint leftHandIK; // ×óÊÖIKÔ¼Êø
-    [SerializeField] private RigBuilder rigBuilder; // Rig¹¹½¨Æ÷
+    [Header("IK ç»„ä»¶")]
+    [SerializeField] private TwoBoneIKConstraint leftHandIK; // å·¦æ‰‹IKçº¦æŸ
+    [SerializeField] private RigBuilder rigBuilder; // Rigæ„å»ºå™¨
 
-    [Header("¹ÒÔØµãÒıÓÃ")]
-    [SerializeField] private WeaponBoneHandle boneHandleManager; // ÎäÆ÷¹Ç÷À¹ÜÀíÆ÷
+    [Header("æŒ‚è½½ç‚¹å¼•ç”¨")]
+    [SerializeField] private WeaponBoneHandle boneHandleManager; // æ­¦å™¨éª¨éª¼ç®¡ç†å™¨
 
-    [SerializeField] private Transform currentLeftHandTarget; // µ±Ç°×óÊÖÄ¿±ê
-    private Transform lastLeftHandTarget; // ÉÏÒ»Ö¡µÄ×óÊÖÄ¿±ê
-    private Coroutine refreshRoutine;        // Ë¢ĞÂĞ­³ÌÒıÓÃ
+    [SerializeField] private Transform currentLeftHandTarget; // å½“å‰å·¦æ‰‹ç›®æ ‡
+    private Transform lastLeftHandTarget; // ä¸Šä¸€å¸§çš„å·¦æ‰‹ç›®æ ‡
+    private Coroutine refreshRoutine;        // åˆ·æ–°åç¨‹å¼•ç”¨
 
     private void Start()
     {
-        // ³õÊ¼½ûÓÃIK
+        // åˆå§‹ç¦ç”¨IK
         if (leftHandIK != null)
         {
             leftHandIK.weight = 0;
@@ -28,44 +28,44 @@ public class IKManager : MonoBehaviour
 
     private void Update()
     {
-        // È·±£Ã¿Ö¡¸üĞÂ×óÊÖÄ¿±ê
+        // ç¡®ä¿æ¯å¸§æ›´æ–°å·¦æ‰‹ç›®æ ‡
         UpdateLeftHandTarget();
     }
 
-    // ¶¨ÆÚ¸üĞÂ×óÊÖÄ¿±ê
+    // å®šæœŸæ›´æ–°å·¦æ‰‹ç›®æ ‡
     private void UpdateLeftHandTarget()
     {
         if (leftHandIK == null || boneHandleManager == null) return;
 
-        // ´Ó¹Ç÷À¹ÜÀíÆ÷»ñÈ¡µ±Ç°×óÊÖÄ¿±ê
+        // ä»éª¨éª¼ç®¡ç†å™¨è·å–å½“å‰å·¦æ‰‹ç›®æ ‡
         Transform newTarget = boneHandleManager.GetCurrentLeftHandTarget();
 
-        // ¼ì²éÄ¿±êÊÇ·ñ±ä»¯
+        // æ£€æŸ¥ç›®æ ‡æ˜¯å¦å˜åŒ–
         if (newTarget != currentLeftHandTarget && newTarget != null)
         {
             currentLeftHandTarget = newTarget;
 
             if (currentLeftHandTarget != null)
             {
-                // ¸üĞÂIKÄ¿±ê
+                // æ›´æ–°IKç›®æ ‡
                 leftHandIK.data.target = currentLeftHandTarget;
 
-                // Æô¶¯Ë¢ĞÂĞ­³Ì
+                // å¯åŠ¨åˆ·æ–°åç¨‹
                 StartRefreshIK();
             }
         }
 
-        // ¼ì²éÊÖ¶¯ÍÏ×§±ä»¯£¨±à¼­Æ÷µ÷ÊÔÓÃ£©
+        // æ£€æŸ¥æ‰‹åŠ¨æ‹–æ‹½å˜åŒ–ï¼ˆç¼–è¾‘å™¨è°ƒè¯•ç”¨ï¼‰
         if (leftHandIK.data.target != lastLeftHandTarget)
         {
             currentLeftHandTarget = leftHandIK.data.target;
             StartRefreshIK();
         }
 
-        // ¸üĞÂ×îºó¼ÇÂ¼µÄÄ¿±ê
+        // æ›´æ–°æœ€åè®°å½•çš„ç›®æ ‡
         lastLeftHandTarget = leftHandIK.data.target;
 
-        // È¨ÖØ¹ı¶É
+        // æƒé‡è¿‡æ¸¡
         float targetWeight = currentLeftHandTarget != null ? 1f : 0f;
         leftHandIK.weight = Mathf.MoveTowards(leftHandIK.weight, targetWeight, 10f * Time.deltaTime);
     }
@@ -75,14 +75,14 @@ public class IKManager : MonoBehaviour
     {
         if (leftHandIK != null)
         {
-            // Çå³ıÄ¿±ê²¢ÖØÖÃÈ¨ÖØ
+            // æ¸…é™¤ç›®æ ‡å¹¶é‡ç½®æƒé‡
             leftHandIK.data.target = null;
             currentLeftHandTarget = null;
             leftHandIK.weight = 0f;
         }
     }
 
-    // µ±¶¯»­ÊÂ¼ş´¥·¢Ê±µ÷ÓÃ
+    // å½“åŠ¨ç”»äº‹ä»¶è§¦å‘æ—¶è°ƒç”¨
     public void ActivateFullIK()
     {
         if (leftHandIK != null)
@@ -91,10 +91,10 @@ public class IKManager : MonoBehaviour
         }
     }
 
-    // Æô¶¯IKË¢ĞÂ£¨·ÀÖ¹ÖØ¸´Ë¢ĞÂ£©
+    // å¯åŠ¨IKåˆ·æ–°ï¼ˆé˜²æ­¢é‡å¤åˆ·æ–°ï¼‰
     private void StartRefreshIK()
     {
-        // Èç¹ûÒÑÓĞË¢ĞÂÔÚ½øĞĞ£¬ÏÈÍ£Ö¹
+        // å¦‚æœå·²æœ‰åˆ·æ–°åœ¨è¿›è¡Œï¼Œå…ˆåœæ­¢
         if (refreshRoutine != null)
         {
             StopCoroutine(refreshRoutine);
@@ -102,48 +102,48 @@ public class IKManager : MonoBehaviour
         refreshRoutine = StartCoroutine(RefreshIKConstraint());
     }
 
-    // Ë¢ĞÂIK
+    // åˆ·æ–°IK
     public IEnumerator RefreshIKConstraint()
     {
         if (leftHandIK == null) yield break;
 
-        Debug.Log("¿ªÊ¼Ë¢ĞÂIKÔ¼Êø...");
+        Debug.Log("å¼€å§‹åˆ·æ–°IKçº¦æŸ...");
 
-        // 1. ÖØÖÃÈ¨ÖØÇ¿ÖÆË¢ĞÂ
+        // 1. é‡ç½®æƒé‡å¼ºåˆ¶åˆ·æ–°
         float originalWeight = leftHandIK.weight;
         leftHandIK.weight = 0f;
 
-        // 2. µÈ´ıÒ»Ö¡È·±£¶¯»­ÏµÍ³¸üĞÂ
+        // 2. ç­‰å¾…ä¸€å¸§ç¡®ä¿åŠ¨ç”»ç³»ç»Ÿæ›´æ–°
         yield return null;
 
-        // 3. Í¨¹ıRig BuilderÖØ½¨
+        // 3. é€šè¿‡Rig Builderé‡å»º
         if (rigBuilder != null)
         {
             rigBuilder.Build();
-            yield return null; // ¶îÍâµÈ´ıÒ»Ö¡
+            yield return null; // é¢å¤–ç­‰å¾…ä¸€å¸§
         }
         else
         {
-            Debug.LogWarning("Î´ÕÒµ½Rig Builder£¬³¢ÊÔÖ±½ÓË¢ĞÂÔ¼Êø");
-            // ½ûÓÃÔÙÆôÓÃÔ¼Êø
+            Debug.LogWarning("æœªæ‰¾åˆ°Rig Builderï¼Œå°è¯•ç›´æ¥åˆ·æ–°çº¦æŸ");
+            // ç¦ç”¨å†å¯ç”¨çº¦æŸ
             leftHandIK.enabled = false;
             yield return null;
             leftHandIK.enabled = true;
             yield return null;
         }
 
-        // 4. ÑéÖ¤¹Ç÷ÀÁ´
+        // 4. éªŒè¯éª¨éª¼é“¾
         if (!leftHandIK.IsValid())
         {
-            Debug.LogError("IKÔ¼ÊøÎŞĞ§! Çë¼ì²é¹Ç÷ÀÁ´ÉèÖÃ", this);
+            Debug.LogError("IKçº¦æŸæ— æ•ˆ! è¯·æ£€æŸ¥éª¨éª¼é“¾è®¾ç½®", this);
             Debug.Log($"Root: {leftHandIK.data.root?.name ?? "null"}");
             Debug.Log($"Mid: {leftHandIK.data.mid?.name ?? "null"}");
             Debug.Log($"Tip: {leftHandIK.data.tip?.name ?? "null"}");
         }
 
-        // 5. »Ö¸´È¨ÖØ
+        // 5. æ¢å¤æƒé‡
         leftHandIK.weight = originalWeight;
 
-        Debug.Log("IKÔ¼ÊøË¢ĞÂÍê³É");
+        Debug.Log("IKçº¦æŸåˆ·æ–°å®Œæˆ");
     }
 }
