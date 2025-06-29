@@ -1164,7 +1164,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100000, guid: 2d0757e218a2f8048918b582a7febbc0, type: 3}
       propertyPath: m_Name
-      value: Button 4 (3)
+      value: QuitGameButton
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 2d0757e218a2f8048918b582a7febbc0, type: 3}
       propertyPath: m_Colors.m_SelectedColor.a
@@ -2236,6 +2236,7 @@ GameObject:
   - component: {fileID: 748421180}
   - component: {fileID: 748421179}
   - component: {fileID: 748421181}
+  - component: {fileID: 748421182}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -2313,21 +2314,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 748421177}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81b8df48339819741a55f9d9ad69ca32, type: 3}
+  m_Script: {fileID: 11500000, guid: 803154e2a0b488048adcc75f173dcc50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSensitivity: 0.2
-  smoothSpeed: 5
-  enableParallax: 1
-  parallaxFactor: 0.5
-  enableBoundaries: 1
+  moveSensitivity: 7.06
+  smoothSpeed: 7.34
+  parallaxFactor: 0.72
   maxHorizontalOffset: 50
   maxVerticalOffset: 30
   currentMousePosition: {x: 0, y: 0}
   calculatedOffset: {x: 0, y: 0}
-  targetPosition: {x: 0, y: 0}
-  initialPosition: {x: 0, y: 0}
-  rectTransform: {fileID: 0}
+--- !u!114 &748421182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748421177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 555801c8f3c958748a871a1858135598, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quitButton: {fileID: 1743215974}
 --- !u!1001 &784365606
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2770,7 +2779,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 100000, guid: 2d0757e218a2f8048918b582a7febbc0, type: 3}
       propertyPath: m_Name
-      value: Button 4
+      value: StartGameButton
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 2d0757e218a2f8048918b582a7febbc0, type: 3}
       propertyPath: m_Colors.m_SelectedColor.a
@@ -3775,6 +3784,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 22400000, guid: 2d0757e218a2f8048918b582a7febbc0, type: 3}
   m_PrefabInstance: {fileID: 483293385}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1743215974 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 11400000, guid: 2d0757e218a2f8048918b582a7febbc0, type: 3}
+  m_PrefabInstance: {fileID: 483293385}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1813886914
 GameObject:
   m_ObjectHideFlags: 0

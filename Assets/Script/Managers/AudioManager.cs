@@ -203,7 +203,7 @@ public class AudioManager : MonoBehaviour
         float volume = sound.volume;
         
         // 应用全局音量设置
-        switch (sound.type)
+        switch (sound.type) 
         {
             case SoundType.MUSIC:
                 volume *= musicVolume;
@@ -291,4 +291,22 @@ public class AudioManager : MonoBehaviour
     }
     
     #endregion
+    
+    
+        public float GetMasterVolume()
+    {
+        return masterVolume;
+    }
+
+    public float GetMusicVolume()
+    {
+        return musicVolume;
+    }
+
+    public float GetSFXVolume()
+    {
+        return sfxVolume;
+    }
+
+    
 }
